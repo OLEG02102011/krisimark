@@ -8,11 +8,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Russo+One&family=Roboto:wght@400;700&display=swap');
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Roboto', sans-serif;
@@ -22,12 +18,410 @@
             overflow-x: hidden;
         }
 
-        /* ===== ПРЕДУПРЕЖДЕНИЕ ДЛЯ ШКОЛЫ ===== */
+        /* ==========================================
+           ФЕЙК-ЭКРАН ВПР (белый стиль sdamgia)
+           ========================================== */
+        .vpr-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 999999;
+            display: none;
+            flex-direction: column;
+            background: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: #333;
+            overflow-y: auto;
+        }
+
+        .vpr-overlay.active {
+            display: flex;
+        }
+
+        /* Верхняя полоска */
+        .vpr-topbar {
+            background: #3b7bbf;
+            height: 4px;
+            width: 100%;
+            flex-shrink: 0;
+        }
+
+        /* Хедер */
+        .vpr-header {
+            background: #fff;
+            border-bottom: 1px solid #ddd;
+            padding: 12px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .vpr-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .vpr-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3b7bbf, #2c5f8a);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .vpr-logo-text {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .vpr-logo-text span {
+            color: #3b7bbf;
+        }
+
+        .vpr-header-nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .vpr-header-nav a {
+            color: #555;
+            text-decoration: none;
+            font-size: 0.9em;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .vpr-header-nav a:hover {
+            background: #f0f0f0;
+        }
+
+        .vpr-header-nav a.active-nav {
+            color: #3b7bbf;
+            background: #e8f0fe;
+            font-weight: 600;
+        }
+
+        /* Навигация предметов */
+        .vpr-subjects-bar {
+            background: #fff;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 0 30px;
+            display: flex;
+            gap: 0;
+            flex-shrink: 0;
+            overflow-x: auto;
+        }
+
+        .vpr-subjects-bar a {
+            padding: 12px 18px;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.88em;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .vpr-subjects-bar a:hover {
+            color: #333;
+            background: #fafafa;
+        }
+
+        .vpr-subjects-bar a.active-subj {
+            color: #3b7bbf;
+            border-bottom-color: #3b7bbf;
+            font-weight: 600;
+        }
+
+        /* Контент */
+        .vpr-content {
+            flex: 1;
+            padding: 25px 30px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .vpr-breadcrumb {
+            font-size: 0.82em;
+            color: #999;
+            margin-bottom: 18px;
+        }
+
+        .vpr-breadcrumb a {
+            color: #3b7bbf;
+            text-decoration: none;
+        }
+
+        .vpr-breadcrumb span {
+            margin: 0 6px;
+            color: #ccc;
+        }
+
+        .vpr-page-title {
+            font-size: 1.6em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .vpr-page-subtitle {
+            font-size: 0.95em;
+            color: #777;
+            margin-bottom: 25px;
+        }
+
+        /* Карточка задания */
+        .vpr-task-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 24px 28px;
+            margin-bottom: 18px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+
+        .vpr-task-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .vpr-task-number {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vpr-task-badge {
+            background: #3b7bbf;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9em;
+        }
+
+        .vpr-task-label {
+            font-weight: 600;
+            color: #444;
+            font-size: 1.05em;
+        }
+
+        .vpr-task-difficulty {
+            font-size: 0.78em;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-weight: 600;
+        }
+
+        .vpr-task-difficulty.medium {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .vpr-task-text {
+            font-size: 0.95em;
+            color: #444;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+
+        .vpr-task-text p {
+            margin-bottom: 10px;
+        }
+
+        .vpr-answer-box {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .vpr-answer-input {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 1em;
+            width: 280px;
+            outline: none;
+            color: #333;
+            background: #fafafa;
+            font-family: inherit;
+        }
+
+        .vpr-answer-input:focus {
+            border-color: #3b7bbf;
+            background: #fff;
+        }
+
+        .vpr-submit-btn {
+            background: #3b7bbf;
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-family: inherit;
+        }
+
+        .vpr-submit-btn:hover {
+            background: #2c5f8a;
+        }
+
+        .vpr-hint-btn {
+            background: none;
+            border: 1px solid #ddd;
+            color: #888;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .vpr-hint-btn:hover {
+            border-color: #3b7bbf;
+            color: #3b7bbf;
+        }
+
+        /* Прогресс */
+        .vpr-progress-panel {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin-bottom: 18px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+
+        .vpr-progress-title {
+            font-size: 0.9em;
+            color: #888;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .vpr-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .vpr-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b7bbf, #5ca0e0);
+            border-radius: 8px;
+            width: 35%;
+        }
+
+        .vpr-progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.82em;
+            color: #999;
+        }
+
+        /* Сайдбар */
+        .vpr-sidebar-info {
+            background: #e8f0fe;
+            border: 1px solid #c5d9f0;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-bottom: 18px;
+        }
+
+        .vpr-sidebar-info h4 {
+            font-size: 0.9em;
+            color: #2c5f8a;
+            margin-bottom: 8px;
+        }
+
+        .vpr-sidebar-info p {
+            font-size: 0.82em;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        /* Футер */
+        .vpr-footer {
+            background: #fff;
+            border-top: 1px solid #e5e5e5;
+            padding: 15px 30px;
+            text-align: center;
+            font-size: 0.78em;
+            color: #bbb;
+            flex-shrink: 0;
+        }
+
+        /* Загрузка внизу */
+        .vpr-loading-bar {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 3px;
+            z-index: 9999999;
+            background: transparent;
+            display: none;
+        }
+
+        .vpr-loading-bar.active {
+            display: block;
+        }
+
+        .vpr-loading-bar::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            height: 100%;
+            width: 30%;
+            background: #3b7bbf;
+            border-radius: 0 3px 3px 0;
+            animation: vprLoadSlide 1s ease-in-out infinite;
+        }
+
+        @keyframes vprLoadSlide {
+            0% { left: -30%; }
+            100% { left: 100%; }
+        }
+
+        @media (max-width: 768px) {
+            .vpr-header-nav { display: none; }
+            .vpr-content { padding: 15px; }
+            .vpr-answer-box { flex-direction: column; }
+            .vpr-answer-input { width: 100%; }
+        }
+
+        /* ==========================================
+           ШКОЛЬНОЕ ПРЕДУПРЕЖДЕНИЕ
+           ========================================== */
         .school-warning {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
+            top: 0; left: 0; width: 100%;
             z-index: 10000;
             background: linear-gradient(90deg, #e74c3c, #c0392b, #e74c3c);
             background-size: 200% 100%;
@@ -84,8 +478,7 @@
             background: rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.3);
             color: #fff;
-            width: 28px;
-            height: 28px;
+            width: 28px; height: 28px;
             border-radius: 50%;
             cursor: pointer;
             font-size: 1em;
@@ -101,11 +494,12 @@
             transform: scale(1.1);
         }
 
-        /* ===== Панель режима учителя ===== */
+        /* ==========================================
+           ПАНЕЛЬ РЕЖИМА УЧИТЕЛЯ
+           ========================================== */
         .teacher-mode-panel {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 20px; right: 20px;
             z-index: 9999;
             display: flex;
             flex-direction: column;
@@ -127,8 +521,7 @@
         }
 
         .teacher-status .status-dot {
-            width: 10px;
-            height: 10px;
+            width: 10px; height: 10px;
             border-radius: 50%;
             background: #2ecc71;
             animation: dotBlink 2s ease infinite;
@@ -142,7 +535,7 @@
 
         .panic-btn {
             background: linear-gradient(135deg, #e74c3c, #c0392b);
-            border: none;
+            border: 2px solid rgba(255,255,255,0.15);
             color: #fff;
             padding: 12px 22px;
             border-radius: 14px;
@@ -155,7 +548,6 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            border: 2px solid rgba(255,255,255,0.15);
         }
 
         .panic-btn:hover {
@@ -163,49 +555,11 @@
             box-shadow: 0 6px 25px rgba(231, 76, 60, 0.6);
         }
 
-        .panic-btn:active {
-            transform: scale(0.95);
-        }
+        .panic-btn:active { transform: scale(0.95); }
 
-        /* ===== Экран перехода ===== */
-        .teacher-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: #fff;
-            z-index: 99999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .teacher-overlay.active {
-            display: flex;
-        }
-
-        .teacher-overlay .loading-text {
-            color: #333;
-            font-size: 1.2em;
-            font-family: 'Roboto', sans-serif;
-        }
-
-        .teacher-overlay .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #ddd;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* ===== Частицы ===== */
+        /* ==========================================
+           ЧАСТИЦЫ
+           ========================================== */
         .particles {
             position: fixed;
             top: 0; left: 0;
@@ -230,27 +584,20 @@
             100% { transform: translateY(-10vh) scale(1); opacity: 0; }
         }
 
+        /* ==========================================
+           ИГРА
+           ========================================== */
         .game-container {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            padding-top: 80px;
-            max-width: 1200px;
-            margin: 0 auto;
+            position: relative; z-index: 1;
+            display: flex; flex-direction: column; align-items: center;
+            padding: 20px; padding-top: 80px;
+            max-width: 1200px; margin: 0 auto;
             transition: padding-top 0.3s;
         }
 
-        .game-container.no-warning {
-            padding-top: 20px;
-        }
+        .game-container.no-warning { padding-top: 20px; }
 
-        .header {
-            text-align: center;
-            margin-bottom: 10px;
-        }
+        .header { text-align: center; margin-bottom: 10px; }
 
         .header h1 {
             font-family: 'Russo One', sans-serif;
@@ -278,12 +625,7 @@
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
 
-        .score-label {
-            font-size: 1em;
-            color: #aaa;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-        }
+        .score-label { font-size: 1em; color: #aaa; text-transform: uppercase; letter-spacing: 3px; }
 
         .score-value {
             font-family: 'Russo One', sans-serif;
@@ -293,75 +635,41 @@
             transition: transform 0.1s;
         }
 
-        .score-value.bump {
-            transform: scale(1.15);
-        }
+        .score-value.bump { transform: scale(1.15); }
 
-        .per-second {
-            font-size: 0.95em;
-            color: #2ecc71;
-            margin-top: 5px;
-        }
+        .per-second { font-size: 0.95em; color: #2ecc71; margin-top: 5px; }
 
         .main-area {
-            display: flex;
-            gap: 30px;
-            width: 100%;
-            justify-content: center;
-            align-items: flex-start;
-            flex-wrap: wrap;
+            display: flex; gap: 30px; width: 100%;
+            justify-content: center; align-items: flex-start; flex-wrap: wrap;
         }
 
-        .click-zone {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
+        .click-zone { display: flex; flex-direction: column; align-items: center; gap: 15px; }
 
         .click-btn {
-            position: relative;
-            width: 260px;
-            height: 260px;
-            border-radius: 50%;
-            cursor: pointer;
+            position: relative; width: 260px; height: 260px;
+            border-radius: 50%; cursor: pointer;
             border: 4px solid rgba(241, 196, 15, 0.6);
             overflow: hidden;
             transition: transform 0.1s ease, box-shadow 0.1s ease;
-            box-shadow:
-                0 0 30px rgba(241, 196, 15, 0.3),
-                0 0 60px rgba(241, 196, 15, 0.1),
-                inset 0 0 30px rgba(0,0,0,0.3);
+            box-shadow: 0 0 30px rgba(241,196,15,0.3), 0 0 60px rgba(241,196,15,0.1), inset 0 0 30px rgba(0,0,0,0.3);
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
 
-        .click-btn img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            pointer-events: none;
-            border-radius: 50%;
-        }
+        .click-btn img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; border-radius: 50%; }
 
         .click-btn:hover {
-            box-shadow:
-                0 0 50px rgba(241, 196, 15, 0.5),
-                0 0 100px rgba(241, 196, 15, 0.2),
-                inset 0 0 30px rgba(0,0,0,0.3);
+            box-shadow: 0 0 50px rgba(241,196,15,0.5), 0 0 100px rgba(241,196,15,0.2), inset 0 0 30px rgba(0,0,0,0.3);
         }
 
         .click-btn:active, .click-btn.pressing {
             transform: scale(0.92);
-            box-shadow:
-                0 0 70px rgba(241, 196, 15, 0.7),
-                0 0 120px rgba(241, 196, 15, 0.3),
-                inset 0 0 40px rgba(0,0,0,0.4);
+            box-shadow: 0 0 70px rgba(241,196,15,0.7), 0 0 120px rgba(241,196,15,0.3), inset 0 0 40px rgba(0,0,0,0.4);
         }
 
         .click-ring {
-            position: absolute;
-            border-radius: 50%;
+            position: absolute; border-radius: 50%;
             border: 3px solid rgba(241, 196, 15, 0.7);
             pointer-events: none;
             animation: ringPulseFromPoint 0.7s ease-out forwards;
@@ -374,43 +682,30 @@
         }
 
         .click-spark {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 60;
+            position: absolute; border-radius: 50%; pointer-events: none; z-index: 60;
             animation: sparkFly 0.6s ease-out forwards;
         }
 
         @keyframes sparkFly {
-            0% { opacity: 1; transform: translate(0, 0) scale(1); }
+            0% { opacity: 1; transform: translate(0,0) scale(1); }
             100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
         }
 
         .click-flash {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            position: absolute; width: 40px; height: 40px; border-radius: 50%;
             background: radial-gradient(circle, rgba(241,196,15,0.8) 0%, rgba(241,196,15,0) 70%);
-            pointer-events: none;
-            z-index: 55;
+            pointer-events: none; z-index: 55;
             animation: flashPulse 0.4s ease-out forwards;
         }
 
         @keyframes flashPulse {
-            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+            0% { transform: translate(-50%,-50%) scale(0.5); opacity: 1; }
+            100% { transform: translate(-50%,-50%) scale(3); opacity: 0; }
         }
 
         .global-spark {
-            position: fixed;
-            width: 4px;
-            height: 4px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
+            position: fixed; width: 4px; height: 4px; border-radius: 50%;
+            pointer-events: none; z-index: 9999;
             animation: globalSparkFly 0.5s ease-out forwards;
         }
 
@@ -422,8 +717,7 @@
         .float-number {
             position: absolute;
             font-family: 'Russo One', sans-serif;
-            font-size: 1.8em;
-            color: #f1c40f;
+            font-size: 1.8em; color: #f1c40f;
             pointer-events: none;
             animation: floatNumber 1s ease-out forwards;
             text-shadow: 0 0 10px rgba(241, 196, 15, 0.8);
@@ -436,28 +730,20 @@
         }
 
         .click-info {
-            font-size: 1.1em;
-            color: #ccc;
+            font-size: 1.1em; color: #ccc;
             background: rgba(255,255,255,0.05);
-            padding: 10px 25px;
-            border-radius: 30px;
+            padding: 10px 25px; border-radius: 30px;
             border: 1px solid rgba(255,255,255,0.08);
         }
 
-        .click-info span {
-            color: #f1c40f;
-            font-weight: bold;
-        }
+        .click-info span { color: #f1c40f; font-weight: bold; }
 
         .upgrades-panel {
             background: rgba(255,255,255,0.03);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 20px;
-            padding: 25px;
-            width: 420px;
-            max-height: 600px;
-            overflow-y: auto;
+            border-radius: 20px; padding: 25px;
+            width: 420px; max-height: 600px; overflow-y: auto;
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
 
@@ -467,206 +753,90 @@
 
         .upgrades-title {
             font-family: 'Russo One', sans-serif;
-            font-size: 1.5em;
-            text-align: center;
-            margin-bottom: 20px;
-            color: #f39c12;
-            letter-spacing: 2px;
+            font-size: 1.5em; text-align: center; margin-bottom: 20px;
+            color: #f39c12; letter-spacing: 2px;
         }
 
         .upgrade-card {
             background: rgba(255,255,255,0.04);
             border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 16px;
-            padding: 18px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            border-radius: 16px; padding: 18px; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 15px;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
         }
 
         .upgrade-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
+            content: ''; position: absolute; top: 0; left: -100%;
             width: 100%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
             transition: left 0.5s;
         }
 
         .upgrade-card:hover::before { left: 100%; }
-
-        .upgrade-card:hover {
-            border-color: rgba(241, 196, 15, 0.3);
-            background: rgba(255,255,255,0.06);
-        }
-
-        .upgrade-card.locked {
-            opacity: 0.4;
-            filter: grayscale(0.5);
-        }
+        .upgrade-card:hover { border-color: rgba(241,196,15,0.3); background: rgba(255,255,255,0.06); }
+        .upgrade-card.locked { opacity: 0.4; filter: grayscale(0.5); }
 
         .upgrade-icon {
-            font-size: 2.5em;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255,255,255,0.05);
-            border-radius: 14px;
-            flex-shrink: 0;
+            font-size: 2.5em; width: 60px; height: 60px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.05); border-radius: 14px; flex-shrink: 0;
         }
 
-        .upgrade-details {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .upgrade-name {
-            font-weight: 700;
-            font-size: 1.05em;
-            margin-bottom: 3px;
-        }
-
-        .upgrade-desc {
-            font-size: 0.8em;
-            color: #999;
-            margin-bottom: 6px;
-        }
-
-        .upgrade-level {
-            font-size: 0.75em;
-            color: #3498db;
-        }
+        .upgrade-details { flex: 1; min-width: 0; }
+        .upgrade-name { font-weight: 700; font-size: 1.05em; margin-bottom: 3px; }
+        .upgrade-desc { font-size: 0.8em; color: #999; margin-bottom: 6px; }
+        .upgrade-level { font-size: 0.75em; color: #3498db; }
 
         .upgrade-buy-btn {
             background: linear-gradient(135deg, #f39c12, #e67e22);
-            border: none;
-            color: #fff;
-            padding: 10px 18px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 0.9em;
-            white-space: nowrap;
-            transition: all 0.2s;
-            font-family: 'Roboto', sans-serif;
-            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
-            flex-shrink: 0;
+            border: none; color: #fff; padding: 10px 18px; border-radius: 12px;
+            cursor: pointer; font-weight: 700; font-size: 0.9em; white-space: nowrap;
+            transition: all 0.2s; font-family: 'Roboto', sans-serif;
+            box-shadow: 0 4px 15px rgba(243,156,18,0.3); flex-shrink: 0;
         }
 
-        .upgrade-buy-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(243, 156, 18, 0.5);
-        }
-
-        .upgrade-buy-btn:active:not(:disabled) {
-            transform: translateY(0) scale(0.95);
-        }
-
-        .upgrade-buy-btn:disabled {
-            background: linear-gradient(135deg, #555, #444);
-            cursor: not-allowed;
-            box-shadow: none;
-        }
+        .upgrade-buy-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(243,156,18,0.5); }
+        .upgrade-buy-btn:active:not(:disabled) { transform: translateY(0) scale(0.95); }
+        .upgrade-buy-btn:disabled { background: linear-gradient(135deg, #555, #444); cursor: not-allowed; box-shadow: none; }
 
         .stats-panel {
-            width: 100%;
-            max-width: 750px;
-            margin-top: 25px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 12px;
+            width: 100%; max-width: 750px; margin-top: 25px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px;
         }
 
         .stat-card {
             background: rgba(255,255,255,0.04);
             border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 14px;
-            padding: 15px;
-            text-align: center;
+            border-radius: 14px; padding: 15px; text-align: center;
         }
 
-        .stat-card .stat-num {
-            font-family: 'Russo One', sans-serif;
-            font-size: 1.6em;
-            color: #3498db;
-        }
-
-        .stat-card .stat-label {
-            font-size: 0.75em;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 4px;
-        }
+        .stat-card .stat-num { font-family: 'Russo One', sans-serif; font-size: 1.6em; color: #3498db; }
+        .stat-card .stat-label { font-size: 0.75em; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
 
         .achievement-popup {
-            position: fixed;
-            top: 80px;
-            right: 30px;
-            background: linear-gradient(135deg, rgba(46, 204, 113, 0.95), rgba(39, 174, 96, 0.95));
+            position: fixed; top: 80px; right: 30px;
+            background: linear-gradient(135deg, rgba(46,204,113,0.95), rgba(39,174,96,0.95));
             backdrop-filter: blur(10px);
-            padding: 18px 28px;
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(46, 204, 113, 0.4);
+            padding: 18px 28px; border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(46,204,113,0.4);
             z-index: 1000;
             animation: achieveIn 0.5s ease, achieveOut 0.5s ease 2.5s forwards;
             max-width: 350px;
         }
 
-        .achievement-popup h3 {
-            font-family: 'Russo One', sans-serif;
-            margin-bottom: 5px;
-        }
+        .achievement-popup h3 { font-family: 'Russo One', sans-serif; margin-bottom: 5px; }
+        .achievement-popup p { font-size: 0.9em; opacity: 0.9; }
 
-        .achievement-popup p {
-            font-size: 0.9em;
-            opacity: 0.9;
-        }
+        @keyframes achieveIn { 0% { transform: translateX(120%); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+        @keyframes achieveOut { 0% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(120%); opacity: 0; } }
 
-        @keyframes achieveIn {
-            0% { transform: translateX(120%); opacity: 0; }
-            100% { transform: translateX(0); opacity: 1; }
-        }
+        .level-bar-container { width: 100%; max-width: 500px; margin-bottom: 15px; }
 
-        @keyframes achieveOut {
-            0% { transform: translateX(0); opacity: 1; }
-            100% { transform: translateX(120%); opacity: 0; }
-        }
+        .level-info { display: flex; justify-content: space-between; font-size: 0.85em; margin-bottom: 6px; color: #aaa; }
 
-        .level-bar-container {
-            width: 100%;
-            max-width: 500px;
-            margin-bottom: 15px;
-        }
+        .level-info .lvl { color: #e74c3c; font-weight: bold; font-family: 'Russo One', sans-serif; font-size: 1.1em; }
 
-        .level-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85em;
-            margin-bottom: 6px;
-            color: #aaa;
-        }
-
-        .level-info .lvl {
-            color: #e74c3c;
-            font-weight: bold;
-            font-family: 'Russo One', sans-serif;
-            font-size: 1.1em;
-        }
-
-        .level-bar {
-            width: 100%;
-            height: 10px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 10px;
-            overflow: hidden;
-        }
+        .level-bar { width: 100%; height: 10px; background: rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden; }
 
         .level-fill {
             height: 100%;
@@ -677,68 +847,36 @@
         }
 
         @media (max-width: 900px) {
-            .main-area {
-                flex-direction: column;
-                align-items: center;
-            }
-            .upgrades-panel {
-                width: 100%;
-                max-width: 420px;
-            }
-            .header h1 {
-                font-size: 2.2em;
-            }
+            .main-area { flex-direction: column; align-items: center; }
+            .upgrades-panel { width: 100%; max-width: 420px; }
+            .header h1 { font-size: 2.2em; }
         }
 
         @media (max-width: 500px) {
-            .click-btn {
-                width: 200px;
-                height: 200px;
-            }
-            .score-value {
-                font-size: 2.5em;
-            }
-            .score-panel {
-                padding: 15px 30px;
-            }
-            .school-warning .warning-text {
-                font-size: 0.78em;
-            }
+            .click-btn { width: 200px; height: 200px; }
+            .score-value { font-size: 2.5em; }
+            .score-panel { padding: 15px 30px; }
+            .school-warning .warning-text { font-size: 0.78em; }
         }
 
         .reset-btn {
             margin-top: 20px;
             background: rgba(231, 76, 60, 0.15);
             border: 1px solid rgba(231, 76, 60, 0.3);
-            color: #e74c3c;
-            padding: 10px 25px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: all 0.3s;
+            color: #e74c3c; padding: 10px 25px; border-radius: 12px;
+            cursor: pointer; font-size: 0.9em; transition: all 0.3s;
             font-family: 'Roboto', sans-serif;
         }
 
-        .reset-btn:hover {
-            background: rgba(231, 76, 60, 0.3);
-        }
+        .reset-btn:hover { background: rgba(231, 76, 60, 0.3); }
 
-        .buy-amount-toggle {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
+        .buy-amount-toggle { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; }
 
         .buy-amount-toggle button {
             background: rgba(255,255,255,0.06);
             border: 1px solid rgba(255,255,255,0.1);
-            color: #ccc;
-            padding: 6px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.85em;
-            transition: all 0.2s;
+            color: #ccc; padding: 6px 16px; border-radius: 8px;
+            cursor: pointer; font-size: 0.85em; transition: all 0.2s;
             font-family: 'Roboto', sans-serif;
         }
 
@@ -749,12 +887,8 @@
         }
 
         .cursor-click-ripple {
-            position: fixed;
-            pointer-events: none;
-            z-index: 99999;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 99999;
+            width: 20px; height: 20px; border-radius: 50%;
             background: radial-gradient(circle, rgba(241,196,15,0.6) 0%, transparent 70%);
             animation: cursorRipple 0.5s ease-out forwards;
         }
@@ -767,7 +901,132 @@
 </head>
 <body>
 
-<!-- ===== ПРЕДУПРЕЖДЕНИЕ ДЛЯ ШКОЛЫ ===== -->
+<!-- ===== ФЕЙК ВПР ЭКРАН ===== -->
+<div class="vpr-overlay" id="vprOverlay">
+    <div class="vpr-loading-bar active" id="vprLoadingBar"></div>
+    <div class="vpr-topbar"></div>
+
+    <div class="vpr-header">
+        <div class="vpr-logo">
+            <div class="vpr-logo-icon">ВПР</div>
+            <div class="vpr-logo-text">Сдам <span>ГИА</span></div>
+        </div>
+        <div class="vpr-header-nav">
+            <a href="#" onclick="return false">Каталог заданий</a>
+            <a href="#" onclick="return false" class="active-nav">Варианты</a>
+            <a href="#" onclick="return false">Статистика</a>
+            <a href="#" onclick="return false">Об экзамене</a>
+        </div>
+    </div>
+
+    <div class="vpr-subjects-bar">
+        <a href="#" onclick="return false">Русский язык</a>
+        <a href="#" onclick="return false" class="active-subj">Математика</a>
+        <a href="#" onclick="return false">Окружающий мир</a>
+        <a href="#" onclick="return false">История</a>
+        <a href="#" onclick="return false">Биология</a>
+        <a href="#" onclick="return false">География</a>
+        <a href="#" onclick="return false">Физика</a>
+        <a href="#" onclick="return false">Обществознание</a>
+    </div>
+
+    <div class="vpr-content">
+        <div class="vpr-breadcrumb">
+            <a href="#" onclick="return false">Главная</a>
+            <span>›</span>
+            <a href="#" onclick="return false">ВПР</a>
+            <span>›</span>
+            <a href="#" onclick="return false">Математика</a>
+            <span>›</span>
+            Вариант № 38274
+        </div>
+
+        <h1 class="vpr-page-title">Вариант № 38274</h1>
+        <p class="vpr-page-subtitle">ВПР 2024 — Математика, 6 класс</p>
+
+        <div class="vpr-progress-panel">
+            <div class="vpr-progress-title">📊 Прогресс выполнения</div>
+            <div class="vpr-progress-bar">
+                <div class="vpr-progress-fill"></div>
+            </div>
+            <div class="vpr-progress-stats">
+                <span>Выполнено: 5 из 14</span>
+                <span>35%</span>
+            </div>
+        </div>
+
+        <div class="vpr-sidebar-info">
+            <h4>💡 Подсказка</h4>
+            <p>При решении задачи на нахождение значения выражения, содержащего десятичные дроби, нужно привести дроби к одному виду и выполнить действия по порядку.</p>
+        </div>
+
+        <!-- Задание 1 -->
+        <div class="vpr-task-card">
+            <div class="vpr-task-header">
+                <div class="vpr-task-number">
+                    <div class="vpr-task-badge">6</div>
+                    <span class="vpr-task-label">Задание 6</span>
+                </div>
+                <span class="vpr-task-difficulty">Базовый</span>
+            </div>
+            <div class="vpr-task-text">
+                <p>Вычислите: 3,8 · 2,5 − 1,4</p>
+                <p>Запишите решение и ответ.</p>
+            </div>
+            <div class="vpr-answer-box">
+                <input type="text" class="vpr-answer-input" placeholder="Введите ответ..." value="8,1">
+                <button class="vpr-submit-btn">Проверить</button>
+                <button class="vpr-hint-btn">💡 Подсказка</button>
+            </div>
+        </div>
+
+        <!-- Задание 2 -->
+        <div class="vpr-task-card">
+            <div class="vpr-task-header">
+                <div class="vpr-task-number">
+                    <div class="vpr-task-badge">7</div>
+                    <span class="vpr-task-label">Задание 7</span>
+                </div>
+                <span class="vpr-task-difficulty medium">Повышенный</span>
+            </div>
+            <div class="vpr-task-text">
+                <p>В магазин привезли 240 кг яблок. В первый день продали 35% всех яблок, во второй день — 40% остатка. Сколько килограммов яблок осталось после двух дней продажи?</p>
+            </div>
+            <div class="vpr-answer-box">
+                <input type="text" class="vpr-answer-input" placeholder="Введите ответ...">
+                <button class="vpr-submit-btn">Проверить</button>
+                <button class="vpr-hint-btn">💡 Подсказка</button>
+            </div>
+        </div>
+
+        <!-- Задание 3 -->
+        <div class="vpr-task-card">
+            <div class="vpr-task-header">
+                <div class="vpr-task-number">
+                    <div class="vpr-task-badge">8</div>
+                    <span class="vpr-task-label">Задание 8</span>
+                </div>
+                <span class="vpr-task-difficulty">Базовый</span>
+            </div>
+            <div class="vpr-task-text">
+                <p>На координатной прямой отмечены точки A, B, C и D.</p>
+                <p>Установите соответствие между точками и их координатами.</p>
+                <p style="margin-top: 8px; color: #777; font-size: 0.9em;">А) 2/5 &nbsp;&nbsp; Б) 1,3 &nbsp;&nbsp; В) 0,8 &nbsp;&nbsp; Г) −0,6</p>
+            </div>
+            <div class="vpr-answer-box">
+                <input type="text" class="vpr-answer-input" placeholder="Например: БВАГ">
+                <button class="vpr-submit-btn">Проверить</button>
+                <button class="vpr-hint-btn">💡 Подсказка</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="vpr-footer">
+        © 2024 Сдам ГИА: Решу ВПР. Образовательный портал для подготовки к проверочным работам.
+    </div>
+</div>
+
+<!-- ===== ПРЕДУПРЕЖДЕНИЕ ===== -->
 <div class="school-warning" id="schoolWarning">
     <span class="warning-icon">⚠️</span>
     <div class="warning-text">
@@ -778,16 +1037,10 @@
     <button class="close-warning" onclick="closeWarning()" title="Закрыть">✕</button>
 </div>
 
-<!-- ===== Экран перехода (белый) ===== -->
-<div class="teacher-overlay" id="teacherOverlay">
-    <div class="spinner"></div>
-    <div class="loading-text">Загрузка ВПР...</div>
-</div>
-
 <!-- Частицы -->
 <div class="particles" id="particles"></div>
 
-<!-- Панель режима учителя -->
+<!-- Кнопка паники -->
 <div class="teacher-mode-panel">
     <div class="teacher-status">
         <div class="status-dot"></div>
@@ -798,6 +1051,7 @@
     </button>
 </div>
 
+<!-- ===== ИГРА ===== -->
 <div class="game-container" id="gameContainer">
 
     <div class="header">
@@ -864,37 +1118,69 @@
 
 <script>
     // =============================================
-    //  РЕЖИМ УЧИТЕЛЯ — клавиша G
+    //  РЕЖИМ УЧИТЕЛЯ
     // =============================================
     const SAFE_URL = 'https://vpr.sdamgia.ru/';
+    let teacherModeActive = false;
 
     document.addEventListener('keydown', function(e) {
+        // G (eng) или П (rus)
         if (e.key === 'g' || e.key === 'G' || e.key === 'п' || e.key === 'П') {
-            activateTeacherMode();
+            if (!teacherModeActive) {
+                activateTeacherMode();
+            }
+        }
+        // ESC — вернуться (если фейк экран открыт локально)
+        if (e.key === 'Escape' && teacherModeActive) {
+            deactivateTeacherMode();
         }
     });
 
     function activateTeacherMode() {
-        // Сохраняем игру перед выходом
+        teacherModeActive = true;
         saveGame();
 
-        // Показываем белый экран мгновенно (чтобы скрыть игру)
-        const overlay = document.getElementById('teacherOverlay');
-        overlay.classList.add('active');
+        // Мгновенно показываем фейк ВПР-страницу
+        document.getElementById('vprOverlay').classList.add('active');
 
-        // Меняем заголовок вкладки
-        document.title = 'ВПР — Pair Preparation';
+        // Скрываем игровые элементы
+        document.getElementById('gameContainer').style.display = 'none';
+        document.getElementById('particles').style.display = 'none';
+        document.querySelector('.teacher-mode-panel').style.display = 'none';
+        document.getElementById('schoolWarning').style.display = 'none';
 
-        // Меняем favicon на пустой
+        // Меняем заголовок и фавикон
+        document.title = 'Решу ВПР — Вариант № 38274';
+
         const favicon = document.querySelector('link[rel="icon"]');
         if (favicon) {
             favicon.href = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📚</text></svg>';
         }
 
-        // Через 200мс переходим (чтобы белый экран успел отрисоваться)
+        // Меняем фон body
+        document.body.style.background = '#f5f5f5';
+        document.body.style.minHeight = '100vh';
+
+        // Через 2 секунды — редирект на настоящий сайт
         setTimeout(() => {
             window.location.replace(SAFE_URL);
-        }, 150);
+        }, 2000);
+    }
+
+    function deactivateTeacherMode() {
+        teacherModeActive = false;
+
+        document.getElementById('vprOverlay').classList.remove('active');
+        document.getElementById('gameContainer').style.display = '';
+        document.getElementById('particles').style.display = '';
+        document.querySelector('.teacher-mode-panel').style.display = '';
+
+        document.title = '🎮 Mega Clicker';
+
+        const favicon = document.querySelector('link[rel="icon"]');
+        if (favicon) favicon.href = 'image.png';
+
+        document.body.style.background = '';
     }
 
     function closeWarning() {
@@ -912,39 +1198,27 @@
     //  ДАННЫЕ ИГРЫ
     // =============================================
     let game = {
-        score: 0,
-        totalEarned: 0,
-        totalClicks: 0,
-        totalUpgradesBought: 0,
-        clickPower: 1,
-        perSecond: 0,
-        level: 1,
-        levelProgress: 0,
-        startTime: Date.now(),
-        buyAmount: 1
+        score: 0, totalEarned: 0, totalClicks: 0,
+        totalUpgradesBought: 0, clickPower: 1, perSecond: 0,
+        level: 1, levelProgress: 0,
+        startTime: Date.now(), buyAmount: 1
     };
 
-    // =============================================
-    //  УЛУЧШЕНИЯ
-    // =============================================
     const upgrades = [
         { id: 'cursor', name: '👆 Быстрый палец', desc: '+1 к силе клика', icon: '👆', baseCost: 15, costMult: 1.15, level: 0, type: 'click', value: 1 },
         { id: 'doubleClick', name: '✌️ Двойной удар', desc: '+3 к силе клика', icon: '✌️', baseCost: 100, costMult: 1.18, level: 0, type: 'click', value: 3 },
-        { id: 'autoClicker', name: '🤖 Авто-кликер', desc: '+1 монета в секунду', icon: '🤖', baseCost: 50, costMult: 1.15, level: 0, type: 'auto', value: 1 },
-        { id: 'robot', name: '🦾 Робот-помощник', desc: '+5 монет в секунду', icon: '🦾', baseCost: 300, costMult: 1.17, level: 0, type: 'auto', value: 5 },
-        { id: 'farm', name: '🏭 Мини-фабрика', desc: '+20 монет в секунду', icon: '🏭', baseCost: 1500, costMult: 1.2, level: 0, type: 'auto', value: 20 },
+        { id: 'autoClicker', name: '🤖 Авто-кликер', desc: '+1 монета/сек', icon: '🤖', baseCost: 50, costMult: 1.15, level: 0, type: 'auto', value: 1 },
+        { id: 'robot', name: '🦾 Робот-помощник', desc: '+5 монет/сек', icon: '🦾', baseCost: 300, costMult: 1.17, level: 0, type: 'auto', value: 5 },
+        { id: 'farm', name: '🏭 Мини-фабрика', desc: '+20 монет/сек', icon: '🏭', baseCost: 1500, costMult: 1.2, level: 0, type: 'auto', value: 20 },
         { id: 'superClick', name: '💥 Супер-клик', desc: '+15 к силе клика', icon: '💥', baseCost: 2000, costMult: 1.2, level: 0, type: 'click', value: 15 },
-        { id: 'lab', name: '🔬 Лаборатория', desc: '+100 монет в секунду', icon: '🔬', baseCost: 10000, costMult: 1.22, level: 0, type: 'auto', value: 100 },
+        { id: 'lab', name: '🔬 Лаборатория', desc: '+100 монет/сек', icon: '🔬', baseCost: 10000, costMult: 1.22, level: 0, type: 'auto', value: 100 },
         { id: 'megaFist', name: '🥊 Мега-кулак', desc: '+50 к силе клика', icon: '🥊', baseCost: 15000, costMult: 1.25, level: 0, type: 'click', value: 50 },
-        { id: 'portal', name: '🌀 Портал монет', desc: '+500 монет в секунду', icon: '🌀', baseCost: 75000, costMult: 1.25, level: 0, type: 'auto', value: 500 },
-        { id: 'galaxy', name: '🌌 Галактический генератор', desc: '+2500 монет в секунду', icon: '🌌', baseCost: 500000, costMult: 1.28, level: 0, type: 'auto', value: 2500 },
+        { id: 'portal', name: '🌀 Портал монет', desc: '+500 монет/сек', icon: '🌀', baseCost: 75000, costMult: 1.25, level: 0, type: 'auto', value: 500 },
+        { id: 'galaxy', name: '🌌 Галактический генератор', desc: '+2500 монет/сек', icon: '🌌', baseCost: 500000, costMult: 1.28, level: 0, type: 'auto', value: 2500 },
         { id: 'godHand', name: '🖐️ Рука Бога', desc: '+250 к силе клика', icon: '🖐️', baseCost: 250000, costMult: 1.3, level: 0, type: 'click', value: 250 },
-        { id: 'blackhole', name: '🕳️ Чёрная дыра', desc: '+10000 монет в секунду', icon: '🕳️', baseCost: 5000000, costMult: 1.3, level: 0, type: 'auto', value: 10000 }
+        { id: 'blackhole', name: '🕳️ Чёрная дыра', desc: '+10000 монет/сек', icon: '🕳️', baseCost: 5000000, costMult: 1.3, level: 0, type: 'auto', value: 10000 }
     ];
 
-    // =============================================
-    //  ДОСТИЖЕНИЯ
-    // =============================================
     const achievements = [
         { id: 'click10', name: '🏅 Первые шаги', desc: '10 кликов!', check: () => game.totalClicks >= 10 },
         { id: 'click100', name: '🎖️ Кликер', desc: '100 кликов!', check: () => game.totalClicks >= 100 },
@@ -962,12 +1236,9 @@
     // =============================================
     //  ФУНКЦИИ
     // =============================================
-
     function getCost(upgrade, count = 1) {
         let total = 0;
-        for (let i = 0; i < count; i++) {
-            total += Math.floor(upgrade.baseCost * Math.pow(upgrade.costMult, upgrade.level + i));
-        }
+        for (let i = 0; i < count; i++) total += Math.floor(upgrade.baseCost * Math.pow(upgrade.costMult, upgrade.level + i));
         return total;
     }
 
@@ -997,65 +1268,59 @@
     }
 
     // =============================================
-    //  ЭФФЕКТЫ КЛИКА
+    //  ЭФФЕКТЫ
     // =============================================
+    const sparkColors = ['#f1c40f','#f39c12','#e74c3c','#ff6b6b','#ffd93d','#fff','#e67e22','#ffab00'];
 
-    const sparkColors = ['#f1c40f', '#f39c12', '#e74c3c', '#ff6b6b', '#ffd93d', '#fff', '#e67e22', '#ffab00'];
-
-    function spawnSparks(localX, localY) {
-        const count = 8 + Math.floor(Math.random() * 5);
-        for (let i = 0; i < count; i++) {
-            const spark = document.createElement('div');
-            spark.classList.add('click-spark');
-            const angle = (Math.PI * 2 / count) * i + (Math.random() - 0.5) * 0.5;
-            const dist = 40 + Math.random() * 60;
-            spark.style.left = localX + 'px';
-            spark.style.top = localY + 'px';
-            spark.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
-            spark.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
-            spark.style.background = sparkColors[Math.floor(Math.random() * sparkColors.length)];
-            spark.style.width = spark.style.height = (3 + Math.random() * 5) + 'px';
-            spark.style.boxShadow = '0 0 6px ' + spark.style.background;
-            clickBtn.appendChild(spark);
-            setTimeout(() => spark.remove(), 600);
+    function spawnSparks(el, lx, ly) {
+        const c = 8 + Math.floor(Math.random() * 5);
+        for (let i = 0; i < c; i++) {
+            const s = document.createElement('div');
+            s.classList.add('click-spark');
+            const a = (Math.PI * 2 / c) * i + (Math.random() - 0.5) * 0.5;
+            const d = 40 + Math.random() * 60;
+            s.style.left = lx + 'px'; s.style.top = ly + 'px';
+            s.style.setProperty('--tx', Math.cos(a) * d + 'px');
+            s.style.setProperty('--ty', Math.sin(a) * d + 'px');
+            s.style.background = sparkColors[Math.floor(Math.random() * sparkColors.length)];
+            s.style.width = s.style.height = (3 + Math.random() * 5) + 'px';
+            s.style.boxShadow = '0 0 6px ' + s.style.background;
+            el.appendChild(s);
+            setTimeout(() => s.remove(), 600);
         }
     }
 
-    function spawnFlash(localX, localY) {
-        const flash = document.createElement('div');
-        flash.classList.add('click-flash');
-        flash.style.left = localX + 'px';
-        flash.style.top = localY + 'px';
-        clickBtn.appendChild(flash);
-        setTimeout(() => flash.remove(), 400);
+    function spawnFlash(el, lx, ly) {
+        const f = document.createElement('div');
+        f.classList.add('click-flash');
+        f.style.left = lx + 'px'; f.style.top = ly + 'px';
+        el.appendChild(f);
+        setTimeout(() => f.remove(), 400);
     }
 
-    function spawnRing(localX, localY) {
-        const ring = document.createElement('div');
-        ring.classList.add('click-ring');
-        ring.style.left = localX + 'px';
-        ring.style.top = localY + 'px';
-        clickBtn.appendChild(ring);
-        setTimeout(() => ring.remove(), 700);
+    function spawnRing(el, lx, ly) {
+        const r = document.createElement('div');
+        r.classList.add('click-ring');
+        r.style.left = lx + 'px'; r.style.top = ly + 'px';
+        el.appendChild(r);
+        setTimeout(() => r.remove(), 700);
     }
 
-    function spawnGlobalClickEffect(clientX, clientY) {
-        const ripple = document.createElement('div');
-        ripple.classList.add('cursor-click-ripple');
-        ripple.style.left = clientX + 'px';
-        ripple.style.top = clientY + 'px';
-        document.body.appendChild(ripple);
-        setTimeout(() => ripple.remove(), 500);
+    function spawnGlobalClickEffect(cx, cy) {
+        const rp = document.createElement('div');
+        rp.classList.add('cursor-click-ripple');
+        rp.style.left = cx + 'px'; rp.style.top = cy + 'px';
+        document.body.appendChild(rp);
+        setTimeout(() => rp.remove(), 500);
 
         for (let i = 0; i < 6; i++) {
             const s = document.createElement('div');
             s.classList.add('global-spark');
-            const angle = (Math.PI * 2 / 6) * i + Math.random() * 0.5;
-            const dist = 20 + Math.random() * 30;
-            s.style.left = clientX + 'px';
-            s.style.top = clientY + 'px';
-            s.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
-            s.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+            const a = (Math.PI * 2 / 6) * i + Math.random() * 0.5;
+            const d = 20 + Math.random() * 30;
+            s.style.left = cx + 'px'; s.style.top = cy + 'px';
+            s.style.setProperty('--tx', Math.cos(a) * d + 'px');
+            s.style.setProperty('--ty', Math.sin(a) * d + 'px');
             s.style.background = sparkColors[Math.floor(Math.random() * sparkColors.length)];
             s.style.boxShadow = '0 0 4px ' + s.style.background;
             document.body.appendChild(s);
@@ -1069,18 +1334,10 @@
     const clickBtn = document.getElementById('clickBtn');
     const scoreEl = document.getElementById('score');
 
-    clickBtn.addEventListener('mousedown', e => {
-        e.preventDefault();
-        handleClick(e.clientX, e.clientY);
-    });
+    clickBtn.addEventListener('mousedown', e => { e.preventDefault(); handleClick(e.clientX, e.clientY); });
+    clickBtn.addEventListener('touchstart', e => { e.preventDefault(); handleClick(e.touches[0].clientX, e.touches[0].clientY); });
 
-    clickBtn.addEventListener('touchstart', e => {
-        e.preventDefault();
-        const touch = e.touches[0];
-        handleClick(touch.clientX, touch.clientY);
-    });
-
-    function handleClick(clientX, clientY) {
+    function handleClick(cx, cy) {
         game.score += game.clickPower;
         game.totalEarned += game.clickPower;
         game.totalClicks++;
@@ -1090,32 +1347,27 @@
         setTimeout(() => scoreEl.classList.remove('bump'), 100);
 
         const rect = clickBtn.getBoundingClientRect();
-        const localX = clientX - rect.left;
-        const localY = clientY - rect.top;
+        const lx = cx - rect.left, ly = cy - rect.top;
 
-        spawnFloatNumber(localX, localY);
-        spawnRing(localX, localY);
-        spawnFlash(localX, localY);
-        spawnSparks(localX, localY);
-        spawnGlobalClickEffect(clientX, clientY);
+        spawnFloatNumber(lx, ly);
+        spawnRing(clickBtn, lx, ly);
+        spawnFlash(clickBtn, lx, ly);
+        spawnSparks(clickBtn, lx, ly);
+        spawnGlobalClickEffect(cx, cy);
 
-        updateUI();
-        checkLevel();
-        checkAchievements();
+        updateUI(); checkLevel(); checkAchievements();
     }
 
-    function spawnFloatNumber(localX, localY) {
-        const num = document.createElement('div');
-        num.classList.add('float-number');
-        num.textContent = '+' + formatNum(game.clickPower);
-        num.style.left = localX + 'px';
-        num.style.top = localY + 'px';
-        num.style.marginLeft = ((Math.random() - 0.5) * 40) + 'px';
-        clickBtn.appendChild(num);
-        setTimeout(() => num.remove(), 1000);
+    function spawnFloatNumber(lx, ly) {
+        const n = document.createElement('div');
+        n.classList.add('float-number');
+        n.textContent = '+' + formatNum(game.clickPower);
+        n.style.left = lx + 'px'; n.style.top = ly + 'px';
+        n.style.marginLeft = ((Math.random() - 0.5) * 40) + 'px';
+        clickBtn.appendChild(n);
+        setTimeout(() => n.remove(), 1000);
     }
 
-    // ===== Покупка =====
     function buyUpgrade(index) {
         const u = upgrades[index];
         const cost = getCost(u, game.buyAmount);
@@ -1123,14 +1375,10 @@
             game.score -= cost;
             u.level += game.buyAmount;
             game.totalUpgradesBought += game.buyAmount;
-            recalcStats();
-            renderUpgrades();
-            updateUI();
-            checkAchievements();
+            recalcStats(); renderUpgrades(); updateUI(); checkAchievements();
         }
     }
 
-    // ===== Уровень =====
     function checkLevel() {
         let needed = getLevelReq(game.level);
         while (game.levelProgress >= needed) {
@@ -1140,11 +1388,8 @@
         }
     }
 
-    function getLevelReq(lvl) {
-        return Math.floor(50 * Math.pow(1.5, lvl - 1));
-    }
+    function getLevelReq(lvl) { return Math.floor(50 * Math.pow(1.5, lvl - 1)); }
 
-    // ===== Достижения =====
     function checkAchievements() {
         for (const a of achievements) {
             if (!unlockedAchievements.has(a.id) && a.check()) {
@@ -1155,23 +1400,20 @@
     }
 
     function showAchievement(a) {
-        const popup = document.createElement('div');
-        popup.classList.add('achievement-popup');
-        popup.innerHTML = `<h3>${a.name}</h3><p>${a.desc}</p>`;
-        document.body.appendChild(popup);
-        setTimeout(() => popup.remove(), 3200);
+        const p = document.createElement('div');
+        p.classList.add('achievement-popup');
+        p.innerHTML = `<h3>${a.name}</h3><p>${a.desc}</p>`;
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 3200);
     }
 
-    // ===== Рендер улучшений =====
     function renderUpgrades() {
         const list = document.getElementById('upgrades-list');
         list.innerHTML = '';
         upgrades.forEach((u, i) => {
             const cost = getCost(u, game.buyAmount);
             const canBuy = game.score >= cost;
-            const isVisible = u.level > 0 || game.totalEarned >= u.baseCost * 0.4;
-            if (!isVisible) return;
-
+            if (u.level === 0 && game.totalEarned < u.baseCost * 0.4) return;
             const card = document.createElement('div');
             card.className = 'upgrade-card' + (canBuy ? '' : ' locked');
             card.innerHTML = `
@@ -1183,13 +1425,11 @@
                 </div>
                 <button class="upgrade-buy-btn" ${canBuy ? '' : 'disabled'} onclick="buyUpgrade(${i})">
                     💰 ${formatNum(cost)}${game.buyAmount > 1 ? ' (x' + game.buyAmount + ')' : ''}
-                </button>
-            `;
+                </button>`;
             list.appendChild(card);
         });
     }
 
-    // ===== UI =====
     function updateUI() {
         document.getElementById('score').textContent = formatNum(game.score);
         document.getElementById('ps').textContent = formatNum(game.perSecond);
@@ -1205,69 +1445,49 @@
         document.getElementById('level-progress-text').textContent = formatNum(game.levelProgress) + ' / ' + formatNum(needed);
 
         const elapsed = Math.floor((Date.now() - game.startTime) / 1000);
-        const min = Math.floor(elapsed / 60);
-        const sec = elapsed % 60;
-        const hrs = Math.floor(min / 60);
-        if (hrs > 0) {
-            document.getElementById('playTime').textContent = hrs + ':' + String(min % 60).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
-        } else {
-            document.getElementById('playTime').textContent = min + ':' + String(sec).padStart(2, '0');
-        }
+        const min = Math.floor(elapsed / 60), sec = elapsed % 60, hrs = Math.floor(min / 60);
+        document.getElementById('playTime').textContent = hrs > 0
+            ? hrs + ':' + String(min % 60).padStart(2, '0') + ':' + String(sec).padStart(2, '0')
+            : min + ':' + String(sec).padStart(2, '0');
     }
 
-    // ===== Автоклик =====
+    // Пассивный доход
     setInterval(() => {
         if (game.perSecond > 0) {
             game.score += game.perSecond / 20;
             game.totalEarned += game.perSecond / 20;
             game.levelProgress += game.perSecond / 20;
-            checkLevel();
-            updateUI();
+            checkLevel(); updateUI();
         }
     }, 50);
 
-    setInterval(() => {
-        renderUpgrades();
-        updateUI();
-        checkAchievements();
-    }, 500);
+    setInterval(() => { renderUpgrades(); updateUI(); checkAchievements(); }, 500);
 
-    // ===== Сохранение =====
+    // =============================================
+    //  СОХРАНЕНИЕ
+    // =============================================
     function saveGame() {
-        const data = {
-            score: game.score,
-            totalEarned: game.totalEarned,
-            totalClicks: game.totalClicks,
-            totalUpgradesBought: game.totalUpgradesBought,
-            level: game.level,
-            levelProgress: game.levelProgress,
+        localStorage.setItem('megaClickerSave', JSON.stringify({
+            score: game.score, totalEarned: game.totalEarned,
+            totalClicks: game.totalClicks, totalUpgradesBought: game.totalUpgradesBought,
+            level: game.level, levelProgress: game.levelProgress,
             startTime: game.startTime,
             upgradeLevels: upgrades.map(u => u.level),
             achievements: [...unlockedAchievements]
-        };
-        localStorage.setItem('megaClickerSave', JSON.stringify(data));
+        }));
     }
 
     function loadGame() {
         const raw = localStorage.getItem('megaClickerSave');
         if (!raw) return;
         try {
-            const data = JSON.parse(raw);
-            game.score = data.score || 0;
-            game.totalEarned = data.totalEarned || 0;
-            game.totalClicks = data.totalClicks || 0;
-            game.totalUpgradesBought = data.totalUpgradesBought || 0;
-            game.level = data.level || 1;
-            game.levelProgress = data.levelProgress || 0;
-            game.startTime = data.startTime || Date.now();
-            if (data.upgradeLevels) {
-                data.upgradeLevels.forEach((lvl, i) => {
-                    if (upgrades[i]) upgrades[i].level = lvl;
-                });
-            }
-            if (data.achievements) {
-                unlockedAchievements = new Set(data.achievements);
-            }
+            const d = JSON.parse(raw);
+            game.score = d.score || 0; game.totalEarned = d.totalEarned || 0;
+            game.totalClicks = d.totalClicks || 0; game.totalUpgradesBought = d.totalUpgradesBought || 0;
+            game.level = d.level || 1; game.levelProgress = d.levelProgress || 0;
+            game.startTime = d.startTime || Date.now();
+            if (d.upgradeLevels) d.upgradeLevels.forEach((l, i) => { if (upgrades[i]) upgrades[i].level = l; });
+            if (d.achievements) unlockedAchievements = new Set(d.achievements);
             recalcStats();
         } catch (e) {}
     }
@@ -1282,9 +1502,9 @@
     setInterval(saveGame, 5000);
     window.addEventListener('beforeunload', saveGame);
 
-    // ===== Частицы =====
+    // Частицы
     function createParticles() {
-        const container = document.getElementById('particles');
+        const c = document.getElementById('particles');
         for (let i = 0; i < 50; i++) {
             const p = document.createElement('div');
             p.classList.add('particle');
@@ -1292,11 +1512,11 @@
             p.style.animationDuration = (Math.random() * 8 + 4) + 's';
             p.style.animationDelay = (Math.random() * 10) + 's';
             p.style.width = p.style.height = (Math.random() * 4 + 2) + 'px';
-            container.appendChild(p);
+            c.appendChild(p);
         }
     }
 
-    // ===== INIT =====
+    // INIT
     createParticles();
     loadGame();
     recalcStats();
