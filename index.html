@@ -3,437 +3,556 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Информатика 7 класс — Решу ВПР</title>
+    <title>🧮 Информатика 7‑класс</title>
+
+    <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" sizes="any">
+
+    <!-- Стили из ВПР -->
+    <link href="/static/css/main.55c291db.chunk.css" rel="stylesheet">
+
+    <!-- Кастомные стили -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            background: #f8f9fc;
-            min-height: 100vh;
-            color: #090949;
-            overflow-x: hidden;
-        }
-
-        /* Стили в стиле sdamgia */
-        .expand { display: none; }
-        a { color: #090949; }
-        .adashed {
-            text-decoration: none;
-            border-color: rgba(9,9,73,.5);
-            border-bottom: 1px dashed;
-        }
-        .adashed:hover {
-            color: #f60;
-            border-color: rgba(255,102,51,.5);
-        }
-
-        /* Верхняя синяя полоска */
-        .site-topbar {
-            background: #090949;
-            height: 4px;
-            width: 100%;
-        }
-
-        .site-header {
-            background: #fff;
-            border-bottom: 1px solid #e0e0e0;
-            padding: 12px 25px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.07);
-        }
-
-        .site-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .site-logo img {
-            height: 42px;
-        }
-
-        .site-logo-text {
-            font-weight: 700;
-            font-size: 1.25em;
-            color: #090949;
-        }
-
-        .site-nav {
-            display: flex;
-            gap: 8px;
-        }
-
-        .site-nav a {
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 0.9em;
-            font-weight: 500;
-        }
-
-        .site-nav a.nav-active {
-            background: #e6f0ff;
-            color: #090949;
-            font-weight: 700;
-        }
-
-        /* Панель предметов — только Информатика */
-        .subjects-bar {
-            background: #fff;
-            border-bottom: 1px solid #d0d0d0;
-            padding: 0 25px;
-            display: flex;
-        }
-
-        .subjects-bar a {
-            padding: 12px 20px;
-            color: #555;
-            text-decoration: none;
-            font-size: 0.9em;
-            border-bottom: 3px solid transparent;
-        }
-
-        .subjects-bar a.subj-active {
-            color: #090949;
-            border-bottom: 3px solid #f60;
-            font-weight: 600;
-        }
-
-        /* Предупреждение */
-        .school-warning {
-            background: #fff3cd;
-            border-bottom: 1px solid #ffc107;
-            padding: 9px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            font-size: 0.85em;
-            color: #856404;
-        }
-
-        .key-hint {
-            background: #090949;
-            color: white;
-            padding: 2px 9px;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-
-        /* Основной контейнер */
-        .game-container {
-            max-width: 1100px;
-            margin: 20px auto;
-            padding: 0 25px;
-        }
-
-        .breadcrumb {
-            color: #666;
-            font-size: 0.85em;
-            margin-bottom: 12px;
-        }
-
-        .score-panel, .level-bar-container, .click-card, .upgrades-panel {
-            background: #fff;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-
-        .score-panel {
-            text-align: center;
-            padding: 20px;
-            margin-bottom: 16px;
-        }
-
-        .score-value {
-            font-size: 3em;
-            font-weight: 700;
-            color: #090949;
-            transition: transform 0.1s;
-        }
-
-        .score-value.bump { transform: scale(1.08); }
-
-        .per-second { color: #27ae60; font-weight: 500; }
-
-        .level-bar-container {
-            padding: 14px 20px;
-            margin-bottom: 16px;
-        }
-
-        .level-bar {
-            height: 9px;
-            background: #eee;
-            border-radius: 6px;
-            overflow: hidden;
-        }
-
-        .level-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #090949, #f60);
-            transition: width 0.4s;
-        }
-
-        .main-area {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .click-zone {
-            flex: 1;
-            min-width: 280px;
-        }
-
-        .click-card {
-            padding: 25px;
-            text-align: center;
-        }
-
-        .click-btn {
-            width: 210px;
-            height: 210px;
-            border-radius: 50%;
-            border: 5px solid #090949;
-            overflow: hidden;
-            cursor: pointer;
-            margin: 15px auto;
-            transition: all 0.1s;
-            box-shadow: 0 4px 15px rgba(9,9,73,0.2);
-        }
-
-        .click-btn:active {
-            transform: scale(0.92);
-        }
-
-        .click-info {
-            font-size: 1em;
-            color: #444;
-            background: #f8f9fc;
-            padding: 8px 20px;
-            border-radius: 20px;
-            display: inline-block;
-        }
-
-        .upgrades-panel {
-            flex: 1;
-            min-width: 340px;
-            padding: 20px;
-            max-height: 580px;
-            overflow-y: auto;
-        }
-
-        .upgrades-title {
-            color: #090949;
-            text-align: center;
-            margin-bottom: 15px;
-            font-size: 1.15em;
-        }
-
-        .upgrade-card {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background: #f8f9fc;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        .upgrade-buy-btn {
-            background: #f60;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .teacher-mode-panel {
-            position: fixed;
-            bottom: 15px;
-            right: 15px;
-            z-index: 1000;
-        }
-
-        .panic-btn {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 3px 10px rgba(231,76,60,0.3);
-        }
-
-        /* Эффекты клика */
-        .click-ring, .click-spark, .click-flash, .float-number {
-            position: absolute;
-            pointer-events: none;
-        }
-
-        @keyframes ringPulse { 0% {width:0;height:0;opacity:1} 100% {width:260px;height:260px;opacity:0} }
-        @keyframes floatNumber { 0% {opacity:1;transform:translateY(0)} 100% {opacity:0;transform:translateY(-90px)} }
+        .expand{display:none}
+        a{color:#090949}
+        .adashed{text-decoration:none;border-color:rgba(9,9,73,.5);border-bottom:1px dashed}
+        .adashed:hover{color:#f60;border-color:rgba(255,102,51,.5)}
     </style>
 </head>
 <body class="Page" data-theme="light">
 
+<!-- ============================================================= -->
+<!--  ШАПКА САЙТА (вид учебного портала)                           -->
+<!-- ============================================================= -->
 <div class="site-topbar"></div>
-
-<div class="site-header">
-    <div class="site-logo">
-        <img src="https://static.sdamgia.ru/static/media/websiteLogo.2c1108a8.svg" alt="Сдам ГИА" style="height:42px;">
-        <div class="site-logo-text">Решу ВПР</div>
-    </div>
-    <div class="site-nav">
-        <a href="#" onclick="return false" class="nav-active">Варианты</a>
-        <a href="#" onclick="return false">Каталог</a>
-        <a href="#" onclick="return false">Теория</a>
-    </div>
-</div>
-
-<div class="subjects-bar">
-    <a href="#" onclick="return false" class="subj-active">Информатика</a>
-</div>
-
-<div class="school-warning" id="schoolWarning">
-    <span>⚠️</span>
-    <div>Вы на уроке информатики. Используйте тихую мышку.<br>
-         Нажмите <span class="key-hint">G</span> для мгновенного перехода на учебный сайт.</div>
-    <button onclick="closeWarning()" style="margin-left:auto;background:none;border:none;cursor:pointer;font-size:1.2em;">✕</button>
-</div>
-
-<div class="teacher-mode-panel">
-    <button class="panic-btn" onclick="activateTeacherMode()">🚨 Учитель идёт!</button>
-</div>
-
-<div class="game-container">
-
-    <div class="breadcrumb">
-        Главная › ВПР › Информатика 7 класс › Вариант
+<div class="site-header" style="padding:12px 30px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 3px rgba(0,0,0,0.06);background:#fff;">
+    <div class="site-logo" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+        <img src="/static/media/websiteLogo.2c1108a8.svg" alt="Logo" style="width:36px;height:36px;">
+        <div class="site-logo-text" style="font-size:1.2em;font-weight:700;color:#2c3e50;">
+            Решу <span style="color:#3b7bbf;">Информатику</span>
+        </div>
     </div>
 
-    <div class="level-bar-container">
-        <div style="display:flex;justify-content:space-between;font-size:0.85em;margin-bottom:6px;">
-            <span>Уровень <strong id="level">1</strong></span>
+    <div class="site-nav" style="display:flex;gap:6px;">
+        <a href="#" style="padding:6px 12px;border-radius:5px;background:#f0f0f0;">Каталог</a>
+        <a href="#" class="adashed" style="border-color:rgba(9,9,73,.5);color:#3b7bbf;background:#e8f0fe;">Варианты</a>
+        <a href="#" style="padding:6px 12px;border-radius:5px;background:#f0f0f0;">Статистика</a>
+        <a href="#" style="padding:6px 12px;border-radius:5px;background:#f0f0f0;">Об экзамене</a>
+    </div>
+</div>
+
+<!-- ============================================================= -->
+<!--  ТОП‑ПАНЕЛЬ С ПРЕДМЕТАМИ (оставляем только Информатику)      -->
+<!-- ============================================================= -->
+<div class="subjects-bar" style="display:flex;gap:0;overflow-x:auto;background:#fff;border-bottom:1px solid #e5e5e5;padding:0 30px;">
+    <a href="#" style="padding:10px 16px;color:#777;text-decoration:none;font-size:0.82em;white-space:nowrap;">Информатика</a>
+</div>
+
+<!-- ============================================================= -->
+<!--  ПРЕДУПРЕЖДЕНИЕ ДЛЯ ШКОЛЫ                                   -->
+<!-- ============================================================= -->
+<div class="school-warning" id="schoolWarning" style="background:#fff3cd;border-bottom:1px solid #ffc107;padding:10px 20px;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;">
+    <span class="warning-icon">⚠️</span>
+    <div class="warning-text" style="font-size:0.85em;color:#856404;font-weight:500;line-height:1.4;">
+        🏫 <strong>Будь аккуратен!</strong> Используй тихую мышку. Нажми <span class="key-hint">G</span> — мгновенный переход на настоящий учебный сайт!
+    </div>
+    <button class="close-warning" onclick="closeWarning()" title="Закрыть"
+            style="background:none;border:1px solid #c9a800;color:#856404;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:0.8em;display:flex;align-items:center;justify-content:center;">✕</button>
+</div>
+
+<!-- ============================================================= -->
+<!--  КНОПКА ПАНИКИ (режим учителя)                               -->
+<!-- ============================================================= -->
+<div class="teacher-mode-panel" style="position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
+    <div class="teacher-status" style="background:#fff;border:1px solid #ddd;padding:8px 14px;border-radius:8px;font-size:0.75em;color:#888;display:flex;align-items:center;gap:6px;box-shadow:0 1px 6px rgba(0,0,0,0.08);">
+        <div class="status-dot" style="width:8px;height:8px;border-radius:50%;background:#27ae60;animation:dotBlink 2s ease infinite;"></div>
+        <span>Нажми <strong>G</strong> — режим учителя</span>
+    </div>
+    <button class="panic-btn" onclick="activateTeacherMode()" style="background:#e74c3c;color:#fff;padding:10px 18px;border:none;border-radius:8px;font-weight:600;font-family:inherit;box-shadow:0 2px 10px rgba(231,76,60,0.3);transition:all 0.2s;display:flex;align-items:center;gap:6px;cursor:pointer;">
+        🚨 Учитель идёт!
+    </button>
+</div>
+
+<!-- ============================================================= -->
+<!--  ИГРА                                                       -->
+<!-- ============================================================= -->
+<div class="game-container" id="gameContainer" style="max-width:1100px;margin:0 auto;padding:20px;">
+
+    <!-- Хлебные крошки -->
+    <div class="breadcrumb" style="font-size:0.8em;color:#999;margin-bottom:16px;">
+        <a href="#" onclick="return false">Главная</a>
+        <span>›</span>
+        <a href="#" onclick="return false">ВПР</a>
+        <span>›</span>
+        <a href="#" onclick="return false">Информатика</a>
+        <span>›</span>
+        Тренажёр
+    </div>
+
+    <!-- Уровень -->
+    <div class="level-bar-container" style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:14px 20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+        <div class="level-info" style="display:flex;justify-content:space-between;font-size:0.82em;color:#888;margin-bottom:6px;">
+            <span>Уровень <span class="lvl" id="level">1</span></span>
             <span id="level-progress-text">0 / 50</span>
         </div>
-        <div class="level-bar"><div class="level-fill" id="level-fill" style="width:0%"></div></div>
+        <div class="level-bar" style="width:100%;height:8px;background:#eee;border-radius:8px;overflow:hidden;">
+            <div class="level-fill" id="level-fill" style="height:100%;background:linear-gradient(90deg,#3b7bbf,#5ca0e0);border-radius:8px;width:0%"></div>
+        </div>
     </div>
 
-    <div class="score-panel">
-        <div style="color:#666;font-size:0.9em;margin-bottom:4px;">БАЛЛЫ ЗА ЗАДАНИЯ</div>
-        <div class="score-value" id="score">0</div>
-        <div class="per-second">+ <span id="ps">0</span> в секунду</div>
+    <!-- СЧЁТ -->
+    <div class="score-panel" style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:20px 30px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.04);text-align:center;">
+        <div class="score-label" style="font-size:0.85em;color:#888;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;">💡 Баллы</div>
+        <div class="score-value" id="score" style="font-size:2.8em;font-weight:700;color:#3b7bbf;transition:transform 0.1s;">0</div>
+        <div class="per-second" style="font-size:0.9em;color:#27ae60;margin-top:4px;">+ <span id="ps">0</span> в секунду</div>
     </div>
 
-    <div class="main-area">
-        <div class="click-zone">
-            <div class="click-card">
-                <div style="color:#666;font-size:0.9em;margin-bottom:10px;">Нажмите, чтобы выполнить задание</div>
-                <div class="click-btn" id="clickBtn">
-                    <img src="image.png" alt="Информатика">
+    <!-- ГЛАВНАЯ ЗОНА -->
+    <div class="main-area" style="display:flex;gap:20px;flex-wrap:wrap;align-items:start;">
+        <!-- ЗОНА КЛИКА -->
+        <div class="click-zone" style="flex:1;min-width:300px;">
+            <div class="click-card" style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:30px;box-shadow:0 1px 4px rgba(0,0,0,0.04);display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;">
+                <div class="click-card-title" style="font-size:0.9em;color:#888;font-weight:500;">Информатический тренажёр</div>
+                <div class="click-btn" id="clickBtn" style="position:relative;width:220px;height:220px;border-radius:50%;cursor:pointer;border:4px solid #3b7bbf;overflow:hidden;transition:transform .1s ease,box-shadow .1s ease;box-shadow:0 4px 20px rgba(59,123,191,.2);user-select:none;">
+                    <img src="image.png" alt="Click me!" style="width:100%;height:100%;object-fit:cover;pointer-events:none;border-radius:50%;">
                 </div>
-                <div class="click-info">Сила клика: <span id="clickPower">1</span></div>
+                <div class="click-info" style="font-size:0.95em;color:#666;background:#f8f9fa;padding:8px 20px;border-radius:20px;border:1px solid #e0e0e0;">
+                    Сила ответа: <span id="clickPower">1</span>
+                </div>
             </div>
         </div>
 
-        <div class="upgrades-panel">
-            <div class="upgrades-title">УЛУЧШЕНИЯ</div>
-            <div class="buy-amount-toggle" style="text-align:center;margin-bottom:12px;">
-                <button class="active" onclick="setBuyAmount(1)">×1</button>
-                <button onclick="setBuyAmount(10)">×10</button>
-                <button onclick="setBuyAmount(100)">×100</button>
+        <!-- УЛУЧШЕНИЯ -->
+        <div class="upgrades-panel" style="flex:1;min-width:340px;background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,0.04);max-height:560px;overflow-y:auto;">
+            <div class="upgrades-title" style="font-size:1.1em;font-weight:700;text-align:center;margin-bottom:14px;color:#2c3e50;letter-spacing:1px;">📝 Улучшения</div>
+            <div class="buy-amount-toggle" style="display:flex;justify-content:center;gap:6px;margin-bottom:14px;">
+                <button class="active" onclick="setBuyAmount(1)">x1</button>
+                <button onclick="setBuyAmount(10)">x10</button>
+                <button onclick="setBuyAmount(100)">x100</button>
             </div>
             <div id="upgrades-list"></div>
         </div>
     </div>
 
-    <div style="margin-top:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;">
-        <div class="score-panel" style="padding:14px;text-align:center;">
-            <div id="totalClicks" style="font-size:1.4em;font-weight:700;color:#090949;">0</div>
-            <div style="font-size:0.75em;color:#666;">Всего решений</div>
+    <!-- СТАТИСТИКА -->
+    <div class="stats-panel" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:16px;">
+        <div class="stat-card" style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+            <div class="stat-num" id="totalClicks" style="font-size:1.4em;font-weight:700;color:#3b7bbf;">0</div>
+            <div class="stat-label" style="font-size:0.7em;color:#999;text-transform:uppercase;letter-spacing:1px;margin-top:3px;">Всего ответов</div>
         </div>
-        <div class="score-panel" style="padding:14px;text-align:center;">
-            <div id="totalEarned" style="font-size:1.4em;font-weight:700;color:#090949;">0</div>
-            <div style="font-size:0.75em;color:#666;">Всего баллов</div>
+        <div class="stat-card" style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+            <div class="stat-num" id="totalEarned" style="font-size:1.4em;font-weight:700;color:#3b7bbf;">0</div>
+            <div class="stat-label" style="font-size:0.7em;color:#999;margin-top:3px;">Всего баллов</div>
         </div>
-        <div class="score-panel" style="padding:14px;text-align:center;">
-            <div id="totalUpgrades" style="font-size:1.4em;font-weight:700;color:#090949;">0</div>
-            <div style="font-size:0.75em;color:#666;">Улучшений</div>
+        <div class="stat-card" style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+            <div class="stat-num" id="totalUpgrades" style="font-size:1.4em;font-weight:700;color:#3b7bbf;">0</div>
+            <div class="stat-label" style="font-size:0.7em;color:#999;margin-top:3px;">Улучшений</div>
         </div>
-        <div class="score-panel" style="padding:14px;text-align:center;">
-            <div id="playTime" style="font-size:1.4em;font-weight:700;color:#090949;">0:00</div>
-            <div style="font-size:0.75em;color:#666;">Время на уроке</div>
+        <div class="stat-card" style="background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+            <div class="stat-num" id="playTime" style="font-size:1.4em;font-weight:700;color:#3b7bbf;">0:00</div>
+            <div class="stat-label" style="font-size:0.7em;color:#999;margin-top:3px;">Время</div>
         </div>
     </div>
 
-    <button onclick="resetGame()" style="margin-top:20px;background:#fff;border:1px solid #e74c3c;color:#e74c3c;padding:8px 20px;border-radius:6px;cursor:pointer;">
-        Сбросить прогресс
-    </button>
+    <button class="reset-btn" onclick="resetGame()" style="margin-top:16px;background:#fff;border:1px solid #e0e0e0;color:#e74c3c;padding:8px 20px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .2s;">🔄 Сбросить прогресс</button>
 </div>
 
 <script>
-// ==================== РЕЖИМ УЧИТЕЛЯ ====================
+/* ============================================================= */
+/*  РЕЖИМ УЧИТЕЛЯ (клавиша G → инфо‑ВПР 7‑класс)                */
+/* ============================================================= */
 const SAFE_URL = 'https://inf7-vpr.sdamgia.ru/';
+let teacherModeActive = false;
 
 document.addEventListener('keydown', e => {
-    if (e.key.toLowerCase() === 'g') {
-        activateTeacherMode();
+    if (e.key === 'g' || e.key === 'G' || e.key === 'п' || e.key === 'П') {
+        if (!teacherModeActive) activateTeacherMode();
     }
 });
 
 function activateTeacherMode() {
-    saveGame();
-    document.title = "Информатика 7 класс — Решу ВПР";
+    teacherModeActive = true;
+    saveGame();                       // Сохраняем прогресс
+    document.title = 'Решу Информатику';
+    // Скрываем игру и показываем «заглушку»
+    document.getElementById('gameContainer').style.display = 'none';
+    document.getElementById('schoolWarning').style.display = 'none';
+    document.querySelector('.teacher-mode-panel').style.display = 'none';
+    document.getElementById('particles').style.display = 'none';
+    // Перенаправляем через секунду
     setTimeout(() => {
         window.location.replace(SAFE_URL);
-    }, 120);
+    }, 1200);
 }
 
 function closeWarning() {
-    document.getElementById('schoolWarning').style.display = 'none';
+    const w = document.getElementById('schoolWarning');
+    w.style.transition = 'all .3s ease';
+    w.style.maxHeight = '0';
+    w.style.padding = '0 20px';
+    w.style.opacity = '0';
+    w.style.overflow = 'hidden';
+    setTimeout(() => w.style.display = 'none', 300);
 }
 
-// ==================== ИГРА ====================
-let game = { score:0, totalEarned:0, totalClicks:0, totalUpgradesBought:0, clickPower:1, perSecond:0, level:1, levelProgress:0, startTime:Date.now(), buyAmount:1 };
+/* ============================================================= */
+/*  ДАННЫЕ ИГРЫ                                                 */
+/* ============================================================= */
+let game = {
+    score: 0, totalEarned: 0, totalClicks: 0,
+    totalUpgradesBought: 0, clickPower: 1, perSecond: 0,
+    level: 1, levelProgress: 0,
+    startTime: Date.now(), buyAmount: 1
+};
 
-const upgrades = [ /* ... тот же массив что был раньше ... */ 
-    { id: 'cursor', name: '👆 Быстрый клик', desc: '+1 к силе', icon: '👆', baseCost: 15, costMult: 1.15, level: 0, type: 'click', value: 1 },
-    { id: 'doubleClick', name: '⌨️ Двойной ввод', desc: '+3 к силе', icon: '⌨️', baseCost: 100, costMult: 1.18, level: 0, type: 'click', value: 3 },
-    { id: 'autoClicker', name: '🤖 Авто-алгоритм', desc: '+1 балл/сек', icon: '🤖', baseCost: 50, costMult: 1.15, level: 0, type: 'auto', value: 1 },
-    // ... остальные улучшения (можно оставить как было)
+const upgrades = [
+    { id: 'cursor', name: '👆 Быстрый палец', desc: '+1 к силе ответа', icon: '👆', baseCost: 15, costMult: 1.15, level: 0, type: 'click', value: 1 },
+    { id: 'doubleClick', name: '✌️ Двойной клик', desc: '+3 к силе ответа', icon: '✌️', baseCost: 100, costMult: 1.18, level: 0, type: 'click', value: 3 },
+    { id: 'autoClicker', name: '🤖 Авто‑отчёт', desc: '+1 балл/сек', icon: '🤖', baseCost: 50, costMult: 1.15, level: 0, type: 'auto', value: 1 },
+    { id: 'robot', name: '🦾 Робот‑помощник', desc: '+5 баллов/сек', icon: '🦾', baseCost: 300, costMult: 1.17, level: 0, type: 'auto', value: 5 },
+    { id: 'farm', name: '🏭 Фабрика решений', desc: '+20 баллов/сек', icon: '🏭', baseCost: 1500, costMult: 1.2, level: 0, type: 'auto', value: 20 },
+    { id: 'superClick', name: '💥 Супер‑ответ', desc: '+15 к силе', icon: '💥', baseCost: 2000, costMult: 1.2, level: 0, type: 'click', value: 15 },
+    { id: 'lab', name: '🔬 Лаборатория', desc: '+100 баллов/сек', icon: '🔬', baseCost: 10000, costMult: 1.22, level: 0, type: 'auto', value: 100 },
+    { id: 'megaFist', name: '🥊 Мега‑решение', desc: '+50 к силе', icon: '🥊', baseCost: 15000, costMult: 1.25, level: 0, type: 'click', value: 50 },
+    { id: 'portal', name: '🌀 Портал знаний', desc: '+500 баллов/сек', icon: '🌀', baseCost: 75000, costMult: 1.25, level: 0, type: 'auto', value: 500 },
+    { id: 'galaxy', name: '🌌 Генератор', desc: '+2500 баллов/сек', icon: '🌌', baseCost: 500000, costMult: 1.28, level: 0, type: 'auto', value: 2500 },
+    { id: 'godHand', name: '🖐️ Рука мастера', desc: '+250 к силе', icon: '🖐️', baseCost: 250000, costMult: 1.3, level: 0, type: 'click', value: 250 },
+    { id: 'blackhole', name: '🕳️ Чёрная дыра', desc: '+10000 баллов/сек', icon: '🕳️', baseCost: 5000000, costMult: 1.3, level: 0, type: 'auto', value: 10000 }
 ];
 
-function getCost(u, count=1){ let t=0; for(let i=0;i<count;i++) t+=Math.floor(u.baseCost*Math.pow(u.costMult,u.level+i)); return t; }
-function formatNum(n){ /* ... тот же формат ... */ 
-    if(n>=1e6) return (n/1e6).toFixed(1)+'M'; if(n>=1e3) return (n/1e3).toFixed(1)+'K'; return Math.floor(n);
+const achievements = [
+    { id: 'click10', name: '🏅 Первые шаги', desc: '10 ответов!', check: () => game.totalClicks >= 10 },
+    { id: 'click100', name: '🎖️ Ученик', desc: '100 ответов!', check: () => game.totalClicks >= 100 },
+    { id: 'click1000', name: '🏆 Отличник', desc: '1000 ответов!', check: () => game.totalClicks >= 1000 },
+    { id: 'earn1000', name: '📊 Первая тысяча', desc: 'Накопи 1000 баллов', check: () => game.totalEarned >= 1000 },
+    { id: 'earn100k', name: '💎 Знаток', desc: 'Накопи 100000 баллов', check: () => game.totalEarned >= 100000 },
+    { id: 'earn1m', name: '👑 Академик', desc: 'Накопи 1000000 баллов', check: () => game.totalEarned >= 1000000 },
+    { id: 'lvl5', name: '⭐ Уровень 5', desc: 'Достигни 5‑го уровня', check: () => game.level >= 5 },
+    { id: 'lvl10', name: '🌟 Уровень 10', desc: 'Достигни 10‑го уровня', check: () => game.level >= 10 },
+    { id: 'ups10', name: '🛒 Коллекционер', desc: 'Купи 10 улучшений', check: () => game.totalUpgradesBought >= 10 },
+    { id: 'ups50', name: '🏪 Магнат', desc: 'Купи 50 улучшений', check: () => game.totalUpgradesBought >= 50 }
+];
+let unlockedAchievements = new Set();
+
+/* ============================================================= */
+/*  УТИЛИТЫ                                                    */
+/* ============================================================= */
+function getCost(u, cnt = 1) {
+    let total = 0;
+    for (let i = 0; i < cnt; i++) {
+        total += Math.floor(u.baseCost * Math.pow(u.costMult, u.level + i));
+    }
+    return total;
+}
+function formatNum(n) {
+    if (n >= 1e12) return (n / 1e12).toFixed(2) + 'T';
+    if (n >= 1e9) return (n / 1e9).toFixed(2) + 'B';
+    if (n >= 1e6) return (n / 1e6).toFixed(2) + 'M';
+    if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
+    return Math.floor(n).toString();
+}
+function recalcStats() {
+    let cp = 1, ps = 0;
+    for (const u of upgrades) {
+        if (u.type === 'click') cp += u.value * u.level;
+        if (u.type === 'auto') ps += u.value * u.level;
+    }
+    game.clickPower = cp;
+    game.perSecond = ps;
+}
+function setBuyAmount(n) {
+    game.buyAmount = n;
+    document.querySelectorAll('.buy-amount-toggle button')
+        .forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    renderUpgrades();
 }
 
-function recalcStats(){ /* ... */ }
-function setBuyAmount(n){ /* ... */ }
-function handleClick(cx,cy){ /* ... тот же код с эффектами ... */ }
-function buyUpgrade(i){ /* ... */ }
-function updateUI(){ /* ... */ }
-function renderUpgrades(){ /* ... */ }
+/* ============================================================= */
+/*  ЭФФЕКТЫ КЛИКА                                              */
+/* ============================================================= */
+const sparkColors = ['#3b7bbf','#5ca0e0','#2c5f8a','#7ec8e3','#27ae60','#e74c3c','#f39c12','#fff'];
+const clickBtn = document.getElementById('clickBtn');
+const scoreEl = document.getElementById('score');
 
-// Инициализация
+clickBtn.addEventListener('mousedown', e => {
+    e.preventDefault();
+    handleClick(e.clientX, e.clientY);
+});
+clickBtn.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const t = e.touches[0];
+    handleClick(t.clientX, t.clientY);
+});
+
+function handleClick(cx, cy) {
+    game.score += game.clickPower;
+    game.totalEarned += game.clickPower;
+    game.totalClicks++;
+    game.levelProgress += game.clickPower;
+
+    scoreEl.classList.add('bump');
+    setTimeout(() => scoreEl.classList.remove('bump'), 100);
+
+    const rect = clickBtn.getBoundingClientRect();
+    const lx = cx - rect.left, ly = cy - rect.top;
+
+    spawnFloatNumber(lx, ly);
+    spawnRing(lx, ly);
+    spawnFlash(lx, ly);
+    spawnSparks(lx, ly);
+    spawnGlobalEffect(cx, cy);
+
+    updateUI();
+    checkLevel();
+    checkAchievements();
+}
+
+function spawnFloatNumber(lx, ly) {
+    const n = document.createElement('div');
+    n.className = 'float-number';
+    n.textContent = '+' + formatNum(game.clickPower);
+    n.style.left = lx + 'px';
+    n.style.top = ly + 'px';
+    n.style.marginLeft = ((Math.random() - 0.5) * 30) + 'px';
+    clickBtn.appendChild(n);
+    setTimeout(() => n.remove(), 1000);
+}
+function spawnRing(lx, ly) {
+    const r = document.createElement('div');
+    r.className = 'click-ring';
+    r.style.left = lx + 'px';
+    r.style.top = ly + 'px';
+    clickBtn.appendChild(r);
+    setTimeout(() => r.remove(), 700);
+}
+function spawnFlash(lx, ly) {
+    const f = document.createElement('div');
+    f.className = 'click-flash';
+    f.style.left = lx + 'px';
+    f.style.top = ly + 'px';
+    clickBtn.appendChild(f);
+    setTimeout(() => f.remove(), 400);
+}
+function spawnSparks(lx, ly) {
+    const count = 8 + Math.floor(Math.random() * 5);
+    for (let i = 0; i < count; i++) {
+        const s = document.createElement('div');
+        s.className = 'click-spark';
+        const ang = (Math.PI * 2 / count) * i + (Math.random() - 0.5) * 0.5;
+        const dist = 35 + Math.random() * 55;
+        s.style.left = lx + 'px';
+        s.style.top = ly + 'px';
+        s.style.setProperty('--tx', Math.cos(ang) * dist + 'px');
+        s.style.setProperty('--ty', Math.sin(ang) * dist + 'px');
+        s.style.background = sparkColors[Math.floor(Math.random() * sparkColors.length)];
+        s.style.width = s.style.height = (3 + Math.random() * 4) + 'px';
+        s.style.boxShadow = '0 0 4px ' + s.style.background;
+        clickBtn.appendChild(s);
+        setTimeout(() => s.remove(), 600);
+    }
+}
+function spawnGlobalEffect(cx, cy) {
+    const rp = document.createElement('div');
+    rp.className = 'cursor-click-ripple';
+    rp.style.left = cx + 'px';
+    rp.style.top = cy + 'px';
+    document.body.appendChild(rp);
+    setTimeout(() => rp.remove(), 500);
+    for (let i = 0; i < 5; i++) {
+        const s = document.createElement('div');
+        s.className = 'global-spark';
+        const ang = (Math.PI * 2 / 5) * i + Math.random() * 0.5;
+        const dist = 15 + Math.random() * 25;
+        s.style.left = cx + 'px';
+        s.style.top = cy + 'px';
+        s.style.setProperty('--tx', Math.cos(ang) * dist + 'px');
+        s.style.setProperty('--ty', Math.sin(ang) * dist + 'px');
+        s.style.background = sparkColors[Math.floor(Math.random() * sparkColors.length)];
+        document.body.appendChild(s);
+        setTimeout(() => s.remove(), 500);
+    }
+}
+
+/* ============================================================= */
+/*  КУПЛИ ТАКТЫКИ                                            */
+/* ============================================================= */
+function buyUpgrade(idx) {
+    const u = upgrades[idx];
+    const cost = getCost(u, game.buyAmount);
+    if (game.score >= cost) {
+        game.score -= cost;
+        u.level += game.buyAmount;
+        game.totalUpgradesBought += game.buyAmount;
+        recalcStats();
+        renderUpgrades();
+        updateUI();
+        checkAchievements();
+    }
+}
+
+/* ============================================================= */
+/*  УРОВЕНЬ И ДОСТИЖЕНИЯ                                    */
+/* ============================================================= */
+function checkLevel() {
+    let need = Math.floor(50 * Math.pow(1.5, game.level - 1));
+    while (game.levelProgress >= need) {
+        game.levelProgress -= need;
+        game.level++;
+        need = Math.floor(50 * Math.pow(1.5, game.level - 1));
+    }
+}
+function getLevelReq(l) { return Math.floor(50 * Math.pow(1.5, l - 1)); }
+function checkAchievements() {
+    for (const a of achievements) {
+        if (!unlockedAchievements.has(a.id) && a.check()) {
+            unlockedAchievements.add(a.id);
+            showAchievement(a);
+        }
+    }
+}
+function showAchievement(a) {
+    const p = document.createElement('div');
+    p.className = 'achievement-popup';
+    p.innerHTML = `<h3>${a.name}</h3><p>${a.desc}</p>`;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 3200);
+}
+
+/* ============================================================= */
+/*  РЕНДЕР УЛУПРШЕНИЙ                                         */
+/* ============================================================= */
+function renderUpgrades() {
+    const list = document.getElementById('upgrades-list');
+    list.innerHTML = '';
+    upgrades.forEach((u, i) => {
+        const cost = getCost(u, game.buyAmount);
+        const canBuy = game.score >= cost;
+        if (u.level === 0 && game.totalEarned < u.baseCost * 0.4) return;
+        const card = document.createElement('div');
+        card.className = 'upgrade-card' + (canBuy ? '' : ' locked');
+        card.innerHTML = `
+            <div class="upgrade-icon">${u.icon}</div>
+            <div class="upgrade-details">
+                <div class="upgrade-name">${u.name}</div>
+                <div class="upgrade-desc">${u.desc}</div>
+                <div class="upgrade-level">Ур. ${u.level}</div>
+            </div>
+            <button class="upgrade-buy-btn" ${canBuy ? '' : 'disabled'} onclick="buyUpgrade(${i})">
+                ${formatNum(cost)}${game.buyAmount > 1 ? ' (x' + game.buyAmount + ')' : ''}
+            </button>`;
+        list.appendChild(card);
+    });
+}
+
+/* ============================================================= */
+/*  UI ОБНОВЛЕНИЕ                                            */
+/* ============================================================= */
+function updateUI() {
+    document.getElementById('score').textContent = formatNum(game.score);
+    document.getElementById('ps').textContent = formatNum(game.perSecond);
+    document.getElementById('clickPower').textContent = formatNum(game.clickPower);
+    document.getElementById('totalClicks').textContent = formatNum(game.totalClicks);
+    document.getElementById('totalEarned').textContent = formatNum(game.totalEarned);
+    document.getElementById('totalUpgrades').textContent = game.totalUpgradesBought;
+    document.getElementById('level').textContent = game.level;
+
+    const need = Math.floor(50 * Math.pow(1.5, game.level - 1));
+    const perc = Math.min((game.levelProgress / need) * 100, 100);
+    document.getElementById('level-fill').style.width = perc + '%';
+    document.getElementById('level-progress-text').textContent = formatNum(game.levelProgress) + ' / ' + formatNum(need);
+
+    const secs = Math.floor((Date.now() - game.startTime) / 1000);
+    const m = Math.floor(secs / 60), s = secs % 60, h = Math.floor(m / 60);
+    document.getElementById('playTime').textContent = h > 0
+        ? h + ':' + String(m % 60).padStart(2, '0') + ':' + String(s).padStart(2, '0')
+        : m + ':' + String(s).padStart(2, '0');
+}
+
+/* ============================================================= */
+/*  ПАССИВНЫЙ ДОХОД                                            */
+/* ============================================================= */
+setInterval(() => {
+    if (game.perSecond > 0) {
+        game.score += game.perSecond / 20;
+        game.totalEarned += game.perSecond / 20;
+        game.levelProgress += game.perSecond / 20;
+        checkLevel();
+        updateUI();
+    }
+}, 50);
+
+setInterval(() => {
+    renderUpgrades();
+    updateUI();
+    checkAchievements();
+}, 500);
+
+/* ============================================================= */
+/*  СОХРАНЕНИЕ И ЗАГРУЗКА                                      */
+/* ============================================================= */
+function saveGame() {
+    const data = {
+        score: game.score, totalEarned: game.totalEarned,
+        totalClicks: game.totalClicks, totalUpgradesBought: game.totalUpgradesBought,
+        level: game.level, levelProgress: game.levelProgress,
+        startTime: game.startTime,
+        upgradeLevels: upgrades.map(u => u.level),
+        achievements: [...unlockedAchievements]
+    };
+    localStorage.setItem('megaClickerSave', JSON.stringify(data));
+}
+function loadGame() {
+    const raw = localStorage.getItem('megaClickerSave');
+    if (!raw) return;
+    try {
+        const d = JSON.parse(raw);
+        game.score = d.score || 0;
+        game.totalEarned = d.totalEarned || 0;
+        game.totalClicks = d.totalClicks || 0;
+        game.totalUpgradesBought = d.totalUpgradesBought || 0;
+        game.level = d.level || 1;
+        game.levelProgress = d.levelProgress || 0;
+        game.startTime = d.startTime || Date.now();
+        if (d.upgradeLevels) d.upgradeLevels.forEach((l, i) => { if (upgrades[i]) upgrades[i].level = l; });
+        if (d.achievements) unlockedAchievements = new Set(d.achievements);
+        recalcStats();
+    } catch (e) {}
+}
+function resetGame() {
+    if (confirm('Сбросить весь прогресс?')) {
+        localStorage.removeItem('megaClickerSave');
+        location.reload();
+    }
+}
+setInterval(saveGame, 5000);
+window.addEventListener('beforeunload', saveGame);
+
+/* ============================================================= */
+/*  ЧАСТИЦЫ                                                    */
+/* ============================================================= */
+function createParticles() {
+    const c = document.getElementById('particles');
+    for (let i = 0; i < 50; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDuration = (Math.random() * 8 + 4) + 's';
+        p.style.animationDelay = (Math.random() * 10) + 's';
+        p.style.width = p.style.height = (Math.random() * 4 + 2) + 'px';
+        c.appendChild(p);
+    }
+}
+
+/* ============================================================= */
+/*  ИНИЦИАЛИЗАЦИЯ                                             */
+/* ============================================================= */
+createParticles();
 loadGame();
 recalcStats();
 renderUpgrades();
 updateUI();
-setInterval(()=>{ if(game.perSecond>0){ game.score+=game.perSecond/20; game.totalEarned+=game.perSecond/20; game.levelProgress+=game.perSecond/20; updateUI(); }},50);
-setInterval(()=>{ renderUpgrades(); updateUI(); },600);
-setInterval(saveGame,5000);
 </script>
+
 </body>
 </html>
