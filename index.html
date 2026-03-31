@@ -22,6 +22,190 @@
             overflow-x: hidden;
         }
 
+        /* ===== ПРЕДУПРЕЖДЕНИЕ ДЛЯ ШКОЛЫ ===== */
+        .school-warning {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10000;
+            background: linear-gradient(90deg, #e74c3c, #c0392b, #e74c3c);
+            background-size: 200% 100%;
+            animation: warningSlide 3s ease infinite;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            box-shadow: 0 4px 20px rgba(231, 76, 60, 0.5);
+            flex-wrap: wrap;
+        }
+
+        @keyframes warningSlide {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .school-warning .warning-icon {
+            font-size: 1.5em;
+            animation: warningPulse 1s ease infinite;
+        }
+
+        @keyframes warningPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .school-warning .warning-text {
+            font-size: 0.9em;
+            font-weight: 700;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .school-warning .warning-text .key-hint {
+            display: inline-block;
+            background: rgba(0,0,0,0.3);
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.1em;
+            margin: 0 3px;
+            border: 1px solid rgba(255,255,255,0.3);
+            animation: keyGlow 2s ease infinite;
+        }
+
+        @keyframes keyGlow {
+            0%, 100% { box-shadow: 0 0 5px rgba(255,255,255,0.2); }
+            50% { box-shadow: 0 0 15px rgba(255,255,255,0.5); }
+        }
+
+        .school-warning .close-warning {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .school-warning .close-warning:hover {
+            background: rgba(0,0,0,0.5);
+            transform: scale(1.1);
+        }
+
+        /* ===== Панель режима учителя ===== */
+        .teacher-mode-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .teacher-status {
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(15px);
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .teacher-status .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #2ecc71;
+            animation: dotBlink 2s ease infinite;
+            box-shadow: 0 0 8px #2ecc71;
+        }
+
+        @keyframes dotBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .panic-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border: none;
+            color: #fff;
+            padding: 12px 22px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.95em;
+            font-family: 'Roboto', sans-serif;
+            box-shadow: 0 4px 20px rgba(231, 76, 60, 0.4);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid rgba(255,255,255,0.15);
+        }
+
+        .panic-btn:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 6px 25px rgba(231, 76, 60, 0.6);
+        }
+
+        .panic-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* ===== Экран перехода ===== */
+        .teacher-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #fff;
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .teacher-overlay.active {
+            display: flex;
+        }
+
+        .teacher-overlay .loading-text {
+            color: #333;
+            font-size: 1.2em;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .teacher-overlay .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #ddd;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ===== Частицы ===== */
         .particles {
             position: fixed;
             top: 0; left: 0;
@@ -53,8 +237,14 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
+            padding-top: 80px;
             max-width: 1200px;
             margin: 0 auto;
+            transition: padding-top 0.3s;
+        }
+
+        .game-container.no-warning {
+            padding-top: 20px;
         }
 
         .header {
@@ -169,7 +359,6 @@
                 inset 0 0 40px rgba(0,0,0,0.4);
         }
 
-        /* ===== Кольцо от точки клика ===== */
         .click-ring {
             position: absolute;
             border-radius: 50%;
@@ -180,19 +369,10 @@
         }
 
         @keyframes ringPulseFromPoint {
-            0% {
-                width: 0; height: 0;
-                opacity: 1;
-                margin-left: 0; margin-top: 0;
-            }
-            100% {
-                width: 300px; height: 300px;
-                opacity: 0;
-                margin-left: -150px; margin-top: -150px;
-            }
+            0% { width: 0; height: 0; opacity: 1; margin-left: 0; margin-top: 0; }
+            100% { width: 300px; height: 300px; opacity: 0; margin-left: -150px; margin-top: -150px; }
         }
 
-        /* ===== Искры от клика ===== */
         .click-spark {
             position: absolute;
             width: 6px;
@@ -204,17 +384,10 @@
         }
 
         @keyframes sparkFly {
-            0% {
-                opacity: 1;
-                transform: translate(0, 0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(var(--tx), var(--ty)) scale(0);
-            }
+            0% { opacity: 1; transform: translate(0, 0) scale(1); }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
         }
 
-        /* ===== Вспышка в точке клика ===== */
         .click-flash {
             position: absolute;
             width: 40px;
@@ -227,43 +400,8 @@
         }
 
         @keyframes flashPulse {
-            0% {
-                transform: translate(-50%, -50%) scale(0.5);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(3);
-                opacity: 0;
-            }
-        }
-
-        /* ===== Глобальный эффект клика по экрану ===== */
-        .global-click-effect {
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-        }
-
-        .global-ring {
-            position: fixed;
-            border-radius: 50%;
-            border: 2px solid rgba(241, 196, 15, 0.5);
-            pointer-events: none;
-            z-index: 9999;
-            animation: globalRingExpand 0.6s ease-out forwards;
-        }
-
-        @keyframes globalRingExpand {
-            0% {
-                width: 0; height: 0;
-                opacity: 1;
-                margin-left: 0; margin-top: 0;
-            }
-            100% {
-                width: 80px; height: 80px;
-                opacity: 0;
-                margin-left: -40px; margin-top: -40px;
-            }
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
         }
 
         .global-spark {
@@ -281,7 +419,6 @@
             100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
         }
 
-        /* ===== Плавающие числа ===== */
         .float-number {
             position: absolute;
             font-family: 'Russo One', sans-serif;
@@ -470,7 +607,7 @@
 
         .achievement-popup {
             position: fixed;
-            top: 30px;
+            top: 80px;
             right: 30px;
             background: linear-gradient(135deg, rgba(46, 204, 113, 0.95), rgba(39, 174, 96, 0.95));
             backdrop-filter: blur(10px);
@@ -564,6 +701,9 @@
             .score-panel {
                 padding: 15px 30px;
             }
+            .school-warning .warning-text {
+                font-size: 0.78em;
+            }
         }
 
         .reset-btn {
@@ -608,7 +748,6 @@
             color: #f1c40f;
         }
 
-        /* ===== Курсор клик-эффект (глобальный) ===== */
         .cursor-click-ripple {
             position: fixed;
             pointer-events: none;
@@ -628,9 +767,38 @@
 </head>
 <body>
 
+<!-- ===== ПРЕДУПРЕЖДЕНИЕ ДЛЯ ШКОЛЫ ===== -->
+<div class="school-warning" id="schoolWarning">
+    <span class="warning-icon">⚠️</span>
+    <div class="warning-text">
+        🏫 <strong>Ты в школе? Будь аккуратен!</strong> Используй тихую мышку.
+        Нажми <span class="key-hint">G</span> — мгновенный переход на учебный сайт!
+        Учитель не заметит 😎
+    </div>
+    <button class="close-warning" onclick="closeWarning()" title="Закрыть">✕</button>
+</div>
+
+<!-- ===== Экран перехода (белый) ===== -->
+<div class="teacher-overlay" id="teacherOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text">Загрузка ВПР...</div>
+</div>
+
+<!-- Частицы -->
 <div class="particles" id="particles"></div>
 
-<div class="game-container">
+<!-- Панель режима учителя -->
+<div class="teacher-mode-panel">
+    <div class="teacher-status">
+        <div class="status-dot"></div>
+        <span>Нажми <strong style="color:#f1c40f">G</strong> — режим учителя</span>
+    </div>
+    <button class="panic-btn" onclick="activateTeacherMode()" title="Экстренный выход!">
+        🚨 УЧИТЕЛЬ ИДЁТ!
+    </button>
+</div>
+
+<div class="game-container" id="gameContainer">
 
     <div class="header">
         <h1>⚡ MEGA CLICKER ⚡</h1>
@@ -695,6 +863,51 @@
 </div>
 
 <script>
+    // =============================================
+    //  РЕЖИМ УЧИТЕЛЯ — клавиша G
+    // =============================================
+    const SAFE_URL = 'https://vpr.sdamgia.ru/';
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'g' || e.key === 'G' || e.key === 'п' || e.key === 'П') {
+            activateTeacherMode();
+        }
+    });
+
+    function activateTeacherMode() {
+        // Сохраняем игру перед выходом
+        saveGame();
+
+        // Показываем белый экран мгновенно (чтобы скрыть игру)
+        const overlay = document.getElementById('teacherOverlay');
+        overlay.classList.add('active');
+
+        // Меняем заголовок вкладки
+        document.title = 'ВПР — Pair Preparation';
+
+        // Меняем favicon на пустой
+        const favicon = document.querySelector('link[rel="icon"]');
+        if (favicon) {
+            favicon.href = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📚</text></svg>';
+        }
+
+        // Через 200мс переходим (чтобы белый экран успел отрисоваться)
+        setTimeout(() => {
+            window.location.replace(SAFE_URL);
+        }, 150);
+    }
+
+    function closeWarning() {
+        const warning = document.getElementById('schoolWarning');
+        warning.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
+        warning.style.transform = 'translateY(-100%)';
+        warning.style.opacity = '0';
+        setTimeout(() => {
+            warning.style.display = 'none';
+            document.getElementById('gameContainer').classList.add('no-warning');
+        }, 400);
+    }
+
     // =============================================
     //  ДАННЫЕ ИГРЫ
     // =============================================
@@ -787,38 +1000,27 @@
     //  ЭФФЕКТЫ КЛИКА
     // =============================================
 
-    const sparkColors = [
-        '#f1c40f', '#f39c12', '#e74c3c',
-        '#ff6b6b', '#ffd93d', '#fff',
-        '#e67e22', '#ffab00'
-    ];
+    const sparkColors = ['#f1c40f', '#f39c12', '#e74c3c', '#ff6b6b', '#ffd93d', '#fff', '#e67e22', '#ffab00'];
 
-    // Искры внутри кнопки (от точки клика)
     function spawnSparks(localX, localY) {
         const count = 8 + Math.floor(Math.random() * 5);
         for (let i = 0; i < count; i++) {
             const spark = document.createElement('div');
             spark.classList.add('click-spark');
-
             const angle = (Math.PI * 2 / count) * i + (Math.random() - 0.5) * 0.5;
             const dist = 40 + Math.random() * 60;
-            const tx = Math.cos(angle) * dist;
-            const ty = Math.sin(angle) * dist;
-
             spark.style.left = localX + 'px';
             spark.style.top = localY + 'px';
-            spark.style.setProperty('--tx', tx + 'px');
-            spark.style.setProperty('--ty', ty + 'px');
+            spark.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+            spark.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
             spark.style.background = sparkColors[Math.floor(Math.random() * sparkColors.length)];
             spark.style.width = spark.style.height = (3 + Math.random() * 5) + 'px';
             spark.style.boxShadow = '0 0 6px ' + spark.style.background;
-
             clickBtn.appendChild(spark);
             setTimeout(() => spark.remove(), 600);
         }
     }
 
-    // Вспышка внутри кнопки
     function spawnFlash(localX, localY) {
         const flash = document.createElement('div');
         flash.classList.add('click-flash');
@@ -828,7 +1030,6 @@
         setTimeout(() => flash.remove(), 400);
     }
 
-    // Кольцо от точки клика (внутри кнопки)
     function spawnRing(localX, localY) {
         const ring = document.createElement('div');
         ring.classList.add('click-ring');
@@ -838,9 +1039,7 @@
         setTimeout(() => ring.remove(), 700);
     }
 
-    // Глобальный эффект курсора (маленькая вспышка)
     function spawnGlobalClickEffect(clientX, clientY) {
-        // Ripple
         const ripple = document.createElement('div');
         ripple.classList.add('cursor-click-ripple');
         ripple.style.left = clientX + 'px';
@@ -848,24 +1047,17 @@
         document.body.appendChild(ripple);
         setTimeout(() => ripple.remove(), 500);
 
-        // Маленькие искорки вокруг курсора
-        const sparkCount = 6;
-        for (let i = 0; i < sparkCount; i++) {
+        for (let i = 0; i < 6; i++) {
             const s = document.createElement('div');
             s.classList.add('global-spark');
-
-            const angle = (Math.PI * 2 / sparkCount) * i + Math.random() * 0.5;
+            const angle = (Math.PI * 2 / 6) * i + Math.random() * 0.5;
             const dist = 20 + Math.random() * 30;
-            const tx = Math.cos(angle) * dist;
-            const ty = Math.sin(angle) * dist;
-
             s.style.left = clientX + 'px';
             s.style.top = clientY + 'px';
-            s.style.setProperty('--tx', tx + 'px');
-            s.style.setProperty('--ty', ty + 'px');
+            s.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+            s.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
             s.style.background = sparkColors[Math.floor(Math.random() * sparkColors.length)];
             s.style.boxShadow = '0 0 4px ' + s.style.background;
-
             document.body.appendChild(s);
             setTimeout(() => s.remove(), 500);
         }
@@ -894,28 +1086,17 @@
         game.totalClicks++;
         game.levelProgress += game.clickPower;
 
-        // Bump анимация счёта
         scoreEl.classList.add('bump');
         setTimeout(() => scoreEl.classList.remove('bump'), 100);
 
-        // Координаты внутри кнопки
         const rect = clickBtn.getBoundingClientRect();
         const localX = clientX - rect.left;
         const localY = clientY - rect.top;
 
-        // Плавающее число от точки клика
         spawnFloatNumber(localX, localY);
-
-        // Кольцо от точки клика
         spawnRing(localX, localY);
-
-        // Вспышка в точке клика
         spawnFlash(localX, localY);
-
-        // Искры от точки клика
         spawnSparks(localX, localY);
-
-        // Глобальный эффект у курсора
         spawnGlobalClickEffect(clientX, clientY);
 
         updateUI();
@@ -929,11 +1110,7 @@
         num.textContent = '+' + formatNum(game.clickPower);
         num.style.left = localX + 'px';
         num.style.top = localY + 'px';
-
-        // Немного случайного смещения
-        const offsetX = (Math.random() - 0.5) * 40;
-        num.style.marginLeft = offsetX + 'px';
-
+        num.style.marginLeft = ((Math.random() - 0.5) * 40) + 'px';
         clickBtn.appendChild(num);
         setTimeout(() => num.remove(), 1000);
     }
@@ -941,12 +1118,11 @@
     // ===== Покупка =====
     function buyUpgrade(index) {
         const u = upgrades[index];
-        const amount = game.buyAmount;
-        const cost = getCost(u, amount);
+        const cost = getCost(u, game.buyAmount);
         if (game.score >= cost) {
             game.score -= cost;
-            u.level += amount;
-            game.totalUpgradesBought += amount;
+            u.level += game.buyAmount;
+            game.totalUpgradesBought += game.buyAmount;
             recalcStats();
             renderUpgrades();
             updateUI();
