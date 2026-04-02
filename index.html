@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -274,7 +274,7 @@
         .shop-buy:active:not(:disabled){transform:scale(.96)}
         .shop-buy:disabled{background:#ccc;cursor:not-allowed}
         .shop-buy.rb-locked{background:#9b59b6;opacity:.7}
-        .shop-buy .cur-icon{width:13px;height:13px;object-fit:contain;filter:brightness(10)}
+        .shop-buy .cur-icon{width:13px;height:13px;object-fit:contain}
 
         .upgrades-panel{flex:1;min-width:320px;max-height:800px;overflow-y:auto}
         .upgrades-panel::-webkit-scrollbar{width:4px}
@@ -297,7 +297,7 @@
         .up-btn:hover:not(:disabled){background:#0d0d5e;transform:translateY(-1px)}
         .up-btn:active:not(:disabled){transform:scale(.96)}
         .up-btn:disabled{background:#ccc;cursor:not-allowed}
-        .up-btn .cur-icon{width:13px;height:13px;object-fit:contain;filter:brightness(10)}
+        .up-btn .cur-icon{width:13px;height:13px;object-fit:contain}
 
         .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:14px}
         .st-card{background:#fff;border:1px solid #e8e8e8;border-radius:7px;padding:12px;text-align:center;transition:all .3s}
@@ -683,73 +683,75 @@ clickBtnWrap.addEventListener('mouseleave',()=>{
 // =============================================
 // ВИДЕО ГЛАВНОЙ КНОПКИ
 // =============================================
-let mainVideoSession=0;
+let mainVideoSession = 0;
+let videoPauseTimeout; // Добавляем переменную для хранения ID таймера
 
-function updateMainButtonVideo(){
-    const sk=skins.find(s=>s.id===activeSkin);
-    if(sk&&sk.video){clickBtnVideo.src=sk.video;clickBtnVideo.load()}
-    else{clickBtnVideo.removeAttribute('src')}
+function updateMainButtonVideo() {
+ const sk = skins.find(s => s.id === activeSkin);
+ if (sk && sk.video) {
+  clickBtnVideo.src = sk.video;
+  clickBtnVideo.load()
+ } else {
+  clickBtnVideo.removeAttribute('src')
+ }
 }
 
-clickBtnWrap.addEventListener('mouseenter',()=>{
-    const session=++mainVideoSession;
-    if(!clickBtnVideo.getAttribute('src'))return;
-    clickBtnVideo.currentTime=0;
-    const p=clickBtnVideo.play();
-    if(p)p.then(()=>{if(mainVideoSession===session){clickBtnVideo.style.opacity='1';clickBtnImg.style.opacity='0'}else{try{clickBtnVideo.pause();clickBtnVideo.currentTime=0}catch(e){}}}).catch(()=>{});
+clickBtnWrap.addEventListener('mouseenter', () => {
+ // --- ИСПРАВЛЕНИЕ: Очищаем таймер паузы при наведении ---
+ clearTimeout(videoPauseTimeout);
+
+ const session = ++mainVideoSession;
+ // --- ИСПРАВЛЕНИЕ: Проверяем свойство src, а не атрибут ---
+ if (!clickBtnVideo.src) return;
+
+ // Сбрасываем время сразу, чтобы не было кадра с конца при повторном наведении
+ try { clickBtnVideo.currentTime = 0; } catch (e) {}
+
+ const p = clickBtnVideo.play();
+ if (p) p.then(() => {
+  if (mainVideoSession === session) {
+   // --- ИСПРАВЛЕНИЕ: Проверяем, не закончилось ли видео ---
+   if (!clickBtnVideo.ended) {
+    clickBtnVideo.style.opacity = '1';
+    clickBtnImg.style.opacity = '0'
+   }
+  } else {
+   // Если сессия устарела (курсор ушел до начала воспроизведения)
+   try {
+    clickBtnVideo.pause();
+    clickBtnVideo.currentTime = 0
+   } catch (e) {}
+  }
+ }).catch(() => {
+   // Обработка ошибки (например, если браузер заблокировал автоплей)
+   if(mainVideoSession === session) {
+     clickBtnVideo.style.opacity = '0';
+     clickBtnImg.style.opacity = '1';
+   }
+ });
 });
 
-clickBtnWrap.addEventListener('mouseleave',()=>{
-    mainVideoSession++;
-    clickBtnVideo.style.opacity='0';
-    clickBtnImg.style.opacity='1';
-    const vid=clickBtnVideo;
-    setTimeout(()=>{try{vid.pause();vid.currentTime=0}catch(e){}},500);
+clickBtnWrap.addEventListener('mouseleave', () => {
+ mainVideoSession++;
+ clickBtnVideo.style.opacity = '0';
+ clickBtnImg.style.opacity = '1';
+ const vid = clickBtnVideo;
+
+ // --- ИСПРАВЛЕНИЕ: Сохраняем ID таймера в переменную ---
+ videoPauseTimeout = setTimeout(() => {
+  try {
+   vid.pause();
+   // vid.currentTime = 0; // Перенес сброс времени в mouseenter для плавности
+  } catch (e) {}
+ }, 500);
 });
 
-clickBtnVideo.addEventListener('ended',()=>{mainVideoSession++;clickBtnVideo.style.opacity='0';clickBtnImg.style.opacity='1'});
-
-// =============================================
-// РЕНДЕР СКИНОВ
-// =============================================
-function renderSkins(){
-    const list=document.getElementById('skins-list');list.innerHTML='';
-    skins.forEach((item,i)=>{
-        const isActive=activeSkin===item.id;
-        const can=!item.owned&&game.currency>=item.cost;
-        const rbLocked=item.reqRebirth>game.rebirths;
-        const c=document.createElement('div');
-        c.className='shop-card'+(isActive?' s-active':'')+(!item.owned?' s-locked':'');
-        c.dataset.cost=item.cost;
-        let bonusHTML=getBonusText(item)?`<div class="shop-bonus">🎁 ${getBonusText(item)}</div>`:'';
-        let action='';
-        if(isActive)action='<span class="shop-badge equipped">✓</span>';
-        else if(item.owned)action='<span class="shop-badge owned" data-equip="1">Надеть</span>';
-        else if(rbLocked)action=`<button class="shop-buy rb-locked" disabled>🔒 ${item.reqRebirth} перерожд.</button>`;
-        else action=`<button class="shop-buy" data-buy="1" ${can?'':'disabled'}>${curIcon()} ${fmt(item.cost)}</button>`;
-        c.innerHTML=`<div class="shop-preview"><img src="${item.img}" onerror="this.src='image.png'"></div>
-            <div class="shop-info"><div class="shop-name">${item.name}</div><div class="shop-desc">${item.desc}</div>${bonusHTML}</div>${action}`;
-        const buyBtn=c.querySelector('[data-buy]');
-        if(buyBtn)buyBtn.addEventListener('click',()=>buySkin(i));
-        const equipBtn=c.querySelector('[data-equip]');
-        if(equipBtn)equipBtn.addEventListener('click',()=>equipSkin(item.id));
-        // Видео hover
-        if(item.video){
-            const preview=c.querySelector('.shop-preview');
-            const img=preview.querySelector('img');
-            let vid=null,session=0;
-            c.addEventListener('mouseenter',()=>{
-                const s=++session;
-                if(!vid){vid=document.createElement('video');vid.muted=true;vid.playsInline=true;vid.className='preview-video';vid.src=item.video;vid.preload='auto';vid.addEventListener('ended',()=>{session++;vid.style.opacity='0';img.style.opacity='1'});preview.appendChild(vid)}
-                vid.currentTime=0;
-                const p=vid.play();
-                if(p)p.then(()=>{if(session===s){vid.style.opacity='1';img.style.opacity='0'}else{try{vid.pause();vid.currentTime=0}catch(e){}}}).catch(()=>{});
-            });
-            c.addEventListener('mouseleave',()=>{session++;if(vid){vid.style.opacity='0';const v=vid;setTimeout(()=>{try{v.pause();v.currentTime=0}catch(e){}},400)}img.style.opacity='1'});
-        }
-        list.appendChild(c);
-    });
-}
+// --- ИСПРАВЛЕНИЕ: Убираем инкремент mainVideoSession ---
+clickBtnVideo.addEventListener('ended', () => {
+ /*mainVideoSession++;*/ // Это больше не нужно
+ clickBtnVideo.style.opacity = '0';
+ clickBtnImg.style.opacity = '1'
+});
 
 // =============================================
 // РЕНДЕР МАГАЗИНОВ (фоны/эффекты/звуки) — цена в ВАЛЮТЕ
