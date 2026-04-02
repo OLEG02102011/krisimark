@@ -37,7 +37,7 @@
         body.dark-bg .level-info{color:rgba(255,255,255,.5)}
         body.dark-bg .level-info .lvl{color:#c4b5fd}
         body.dark-bg .level-fill{background:#a5b4fc}
-        body.dark-bg .click-btn{border-color:#a5b4fc}
+        body.dark-bg .click-btn-wrap{border-color:#a5b4fc}
         body.dark-bg .click-stat{color:rgba(255,255,255,.5)}
         body.dark-bg .click-stat span{color:#c4b5fd}
         body.dark-bg .click-card-label{color:rgba(255,255,255,.5)}
@@ -74,6 +74,9 @@
         body.dark-bg .sound-toggle{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.5)}
         body.dark-bg .sound-toggle.on{background:rgba(76,175,80,.15);border-color:rgba(76,175,80,.4);color:#6bcb77}
         body.dark-bg .sound-school-note{color:#ff6b6b}
+        body.dark-bg .currency-display{background:rgba(30,27,75,.7);border-color:rgba(255,215,0,.3)}
+        body.dark-bg .currency-amount{color:#ffd700}
+        body.dark-bg .currency-label{color:rgba(255,255,255,.5)}
 
         .header-wrap{background:#fff;border-bottom:1px solid #e0e0e0;box-shadow:0 1px 3px rgba(0,0,0,.04);position:sticky;top:0;z-index:200}
         .header-inner{max-width:1100px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:56px}
@@ -108,6 +111,18 @@
         .card{background:#fff;border:1px solid #e8e8e8;border-radius:8px;padding:18px 22px;margin-bottom:14px;transition:all .3s}
         .card-title{font-size:.82em;color:#999;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;font-weight:500}
 
+        /* ========================
+           ВАЛЮТА
+        ======================== */
+        .currency-display{display:flex;align-items:center;justify-content:center;gap:10px;background:#fffdf0;border:1px solid #ffe58f;border-radius:10px;padding:8px 18px;margin-bottom:10px;transition:all .3s}
+        .currency-icon{width:32px;height:32px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(255,215,0,.5));animation:currencySpin 4s ease-in-out infinite}
+        @keyframes currencySpin{0%,100%{transform:rotateY(0deg) scale(1)}30%{transform:rotateY(20deg) scale(1.05)}60%{transform:rotateY(-10deg) scale(1)}}
+        .currency-info{display:flex;flex-direction:column;align-items:flex-start}
+        .currency-amount{font-size:1.5em;font-weight:700;color:#b8860b;line-height:1.1;transition:transform .1s}
+        .currency-amount.bump{transform:scale(1.12)}
+        .currency-label{font-size:.65em;color:#8b6914;font-weight:500;text-transform:uppercase;letter-spacing:.8px}
+        .currency-rate{font-size:.72em;color:#27ae60;font-weight:500}
+
         .score-panel{text-align:center}
         .score-value{font-size:2.6em;font-weight:700;color:#090949;transition:transform .1s;line-height:1.2}
         .score-value.bump{transform:scale(1.08)}
@@ -128,12 +143,59 @@
         .main-area{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
         .click-zone{flex:1;min-width:280px}
         .click-card-label{font-size:.85em;color:#888;text-align:center;margin-bottom:12px}
-        .click-btn{position:relative;width:200px;height:200px;border-radius:50%;cursor:pointer;border:3px solid #090949;overflow:hidden;transition:transform .1s ease,box-shadow .1s ease;box-shadow:0 2px 12px rgba(9,9,73,.12);user-select:none;-webkit-tap-highlight-color:transparent;margin:0 auto;display:block}
+
+        /* ========================
+           3D КНОПКА
+        ======================== */
+        .click-btn-wrap{
+            position:relative;
+            width:200px;
+            height:200px;
+            margin:0 auto;
+            perspective:600px;
+            perspective-origin:center center;
+        }
+        .click-btn{
+            position:relative;
+            width:200px;
+            height:200px;
+            border-radius:50%;
+            cursor:pointer;
+            border:3px solid #090949;
+            overflow:hidden;
+            box-shadow:
+                0 2px 12px rgba(9,9,73,.12),
+                0 8px 24px rgba(9,9,73,.08),
+                inset 0 1px 0 rgba(255,255,255,.3);
+            user-select:none;
+            -webkit-tap-highlight-color:transparent;
+            display:block;
+            transform-style:preserve-3d;
+            transform:rotateX(0deg) rotateY(0deg);
+            transition:transform .08s ease, box-shadow .08s ease;
+            will-change:transform;
+        }
+        .click-btn::before{
+            content:'';
+            position:absolute;
+            top:0;left:0;right:0;
+            height:50%;
+            background:linear-gradient(180deg,rgba(255,255,255,.25) 0%,transparent 100%);
+            border-radius:50% 50% 0 0;
+            pointer-events:none;
+            z-index:10;
+        }
         .click-btn img{width:100%;height:100%;object-fit:cover;pointer-events:none;border-radius:50%;transition:opacity .45s ease}
-        .click-btn:hover{box-shadow:0 4px 20px rgba(9,9,73,.18)}
-        .click-btn:active{transform:scale(.93);box-shadow:0 1px 8px rgba(9,9,73,.2)}
+        .click-btn:active{transform:scale(.93)!important;box-shadow:0 1px 8px rgba(9,9,73,.2)!important}
         .click-btn.skin-change img{animation:skinFlash .6s ease}
         @keyframes skinFlash{0%{transform:scale(1) rotate(0);filter:brightness(1)}30%{transform:scale(1.15) rotate(5deg);filter:brightness(1.8)}60%{transform:scale(.9) rotate(-3deg);filter:brightness(1.2)}100%{transform:scale(1) rotate(0);filter:brightness(1)}}
+        /* 3D shadow glow that follows tilt */
+        .click-btn-wrap.tilt-active .click-btn{
+            box-shadow:
+                var(--tilt-shadow-x, 0px) var(--tilt-shadow-y, 4px) 28px rgba(9,9,73,.22),
+                0 2px 8px rgba(9,9,73,.12),
+                inset 0 1px 0 rgba(255,255,255,.3);
+        }
 
         #clickBtnVideo{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:50%;opacity:0;transition:opacity .45s ease;pointer-events:none;z-index:2}
 
@@ -143,7 +205,6 @@
         .preview-video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:50%;opacity:0;transition:opacity .35s ease;pointer-events:none}
         .shop-preview-icon{font-size:1.6em}
 
-        /* === ЗВУК === */
         .sound-control{text-align:center;margin-top:10px;display:flex;flex-direction:column;align-items:center;gap:4px}
         .sound-toggle{background:#f5f5f5;border:1px solid #ddd;padding:6px 16px;border-radius:20px;cursor:pointer;font-size:.8em;transition:all .2s;font-family:inherit;display:inline-flex;align-items:center;gap:6px;color:#777}
         .sound-toggle:hover{background:#eee;transform:translateY(-1px)}
@@ -184,6 +245,9 @@
         @keyframes gSpk{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0)}}
         .g-ripple{position:fixed;pointer-events:none;z-index:9998;width:14px;height:14px;border-radius:50%;animation:gRip .45s ease-out forwards}
         @keyframes gRip{0%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(-50%,-50%) scale(3.5);opacity:0}}
+        /* Currency float particle */
+        .float-currency{position:absolute;font-size:1em;font-weight:700;pointer-events:none;animation:fltNum .9s ease-out forwards;z-index:101;color:#b8860b;display:flex;align-items:center;gap:3px}
+        .float-currency img{width:16px;height:16px;object-fit:contain}
 
         .click-stat{font-size:.88em;color:#777;text-align:center;margin-top:12px}
         .click-stat span{color:#090949;font-weight:700}
@@ -205,11 +269,12 @@
         .shop-badge.equipped{background:#090949;color:#fff}
         .shop-badge.owned{background:#e8f5e9;color:#2e7d32;cursor:pointer;border:1px solid #c8e6c9;transition:all .15s}
         .shop-badge.owned:hover{background:#c8e6c9}
-        .shop-buy{background:#090949;border:none;color:#fff;padding:6px 11px;border-radius:5px;cursor:pointer;font-weight:600;font-size:.75em;white-space:nowrap;transition:all .15s;font-family:inherit;flex-shrink:0}
+        .shop-buy{background:#090949;border:none;color:#fff;padding:6px 11px;border-radius:5px;cursor:pointer;font-weight:600;font-size:.75em;white-space:nowrap;transition:all .15s;font-family:inherit;flex-shrink:0;display:flex;align-items:center;gap:4px}
         .shop-buy:hover:not(:disabled){background:#0d0d5e;transform:translateY(-1px)}
         .shop-buy:active:not(:disabled){transform:scale(.96)}
         .shop-buy:disabled{background:#ccc;cursor:not-allowed}
         .shop-buy.rb-locked{background:#9b59b6;opacity:.7}
+        .shop-buy .cur-icon{width:13px;height:13px;object-fit:contain;filter:brightness(10)}
 
         .upgrades-panel{flex:1;min-width:320px;max-height:800px;overflow-y:auto}
         .upgrades-panel::-webkit-scrollbar{width:4px}
@@ -228,10 +293,11 @@
         .up-name{font-weight:600;font-size:.88em;color:#090949;margin-bottom:1px}
         .up-desc{font-size:.72em;color:#aaa;margin-bottom:2px}
         .up-lvl{font-size:.68em;color:#3b7bbf;font-weight:500}
-        .up-btn{background:#090949;border:none;color:#fff;padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:600;font-size:.78em;white-space:nowrap;transition:all .15s;font-family:inherit;flex-shrink:0}
+        .up-btn{background:#090949;border:none;color:#fff;padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:600;font-size:.78em;white-space:nowrap;transition:all .15s;font-family:inherit;flex-shrink:0;display:flex;align-items:center;gap:4px}
         .up-btn:hover:not(:disabled){background:#0d0d5e;transform:translateY(-1px)}
         .up-btn:active:not(:disabled){transform:scale(.96)}
         .up-btn:disabled{background:#ccc;cursor:not-allowed}
+        .up-btn .cur-icon{width:13px;height:13px;object-fit:contain;filter:brightness(10)}
 
         .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:14px}
         .st-card{background:#fff;border:1px solid #e8e8e8;border-radius:7px;padding:12px;text-align:center;transition:all .3s}
@@ -284,7 +350,7 @@
 
         .site-footer{margin-top:30px;padding:14px 20px;text-align:center;font-size:.72em;color:#ccc;border-top:1px solid #eee;transition:all .3s}
         @media(max-width:800px){.main-area{flex-direction:column}.header-nav{display:none}.click-zone,.upgrades-panel{min-width:unset;width:100%}}
-        @media(max-width:500px){.click-btn{width:160px;height:160px}.score-value{font-size:2em}.subheader{overflow-x:auto}.page-container{padding:10px 12px}}
+        @media(max-width:500px){.click-btn-wrap,.click-btn{width:160px;height:160px}.score-value{font-size:2em}.subheader{overflow-x:auto}.page-container{padding:10px 12px}}
     </style>
 </head>
 <body class="Page" data-theme="light">
@@ -330,6 +396,20 @@
         <div class="level-info"><span>Уровень <span class="lvl" id="level">1</span></span><span id="level-progress-text">0 / 50</span></div>
         <div class="level-bar"><div class="level-fill" id="level-fill" style="width:0%"></div></div>
     </div>
+
+    <!-- ВАЛЮТА -->
+    <div class="currency-display" id="currencyDisplay">
+        <img src="Currency.png" class="currency-icon" id="currencyIcon" alt="💰" onerror="this.style.display='none'">
+        <div class="currency-info">
+            <div class="currency-amount" id="currencyAmount">0</div>
+            <div class="currency-label">Монеты</div>
+        </div>
+        <div style="margin-left:12px;text-align:right">
+            <div class="currency-rate">+<span id="currencyRate">0</span>/сек</div>
+            <div style="font-size:.65em;color:#8b6914;margin-top:2px">x<span id="currencyMult">1.0</span> множитель</div>
+        </div>
+    </div>
+
     <div class="card score-panel">
         <div class="card-title">Набранные баллы</div>
         <div class="score-value" id="score">0</div>
@@ -342,11 +422,14 @@
     <div class="main-area">
         <div class="click-zone"><div class="card">
             <div class="click-card-label">Задание — нажмите для решения</div>
-            <div class="click-btn" id="clickBtn">
-                <img src="image.png" alt="" id="clickBtnImg">
-                <video id="clickBtnVideo" muted playsinline preload="auto"></video>
+            <!-- 3D WRAPPER -->
+            <div class="click-btn-wrap" id="clickBtnWrap">
+                <div class="click-btn" id="clickBtn">
+                    <img src="image.png" alt="" id="clickBtnImg">
+                    <video id="clickBtnVideo" muted playsinline preload="auto"></video>
+                </div>
             </div>
-            <div class="click-stat">Сила ответа: <span id="clickPower">1</span></div>
+            <div class="click-stat">Сила ответа: <span id="clickPower">1</span> &nbsp;|&nbsp; <img src="Currency.png" style="width:14px;height:14px;vertical-align:middle;object-fit:contain" onerror="this.style.display='none'"> <span id="clickCurrency">1</span>/клик</div>
             <div class="sound-control">
                 <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔇 Звук ВЫКЛ</button>
                 <div class="sound-school-note">⚠️ В школе — не включай звук!</div>
@@ -367,9 +450,9 @@
             <hr class="section-divider">
             <div class="up-title">⚡ Улучшения</div>
             <div class="buy-toggle">
-                <button class="active" onclick="setBuyAmount(1)">x1</button>
-                <button onclick="setBuyAmount(10)">x10</button>
-                <button onclick="setBuyAmount(100)">x100</button>
+                <button class="active" onclick="setBuyAmount(1,this)">x1</button>
+                <button onclick="setBuyAmount(10,this)">x10</button>
+                <button onclick="setBuyAmount(100,this)">x100</button>
             </div>
             <div id="upgrades-list"></div>
         </div>
@@ -377,6 +460,7 @@
     <div class="stats-grid">
         <div class="st-card"><div class="st-num" id="totalClicks">0</div><div class="st-label">Ответов</div></div>
         <div class="st-card"><div class="st-num" id="totalEarned">0</div><div class="st-label">Всего баллов</div></div>
+        <div class="st-card"><div class="st-num" id="totalCurrency">0</div><div class="st-label">Монет собрано</div></div>
         <div class="st-card"><div class="st-num" id="totalUpgrades">0</div><div class="st-label">Улучшений</div></div>
         <div class="st-card"><div class="st-num" id="totalRebirths">0</div><div class="st-label">Перерождений</div></div>
     </div>
@@ -395,15 +479,26 @@ function activateTeacherMode(){teacherMode=true;saveGame();document.title='Ре�
 function closeWarning(){const w=document.getElementById('schoolWarning');w.style.maxHeight='0';w.style.padding='0';w.style.opacity='0';w.style.overflow='hidden';setTimeout(()=>w.style.display='none',300)}
 
 // =============================================
-// СКИНЫ (с видео)
+// СКИНЫ (image1-image17 + видео)
 // =============================================
 const skins=[
-    {id:'default',name:'🟢 Стандартный',desc:'Начальный',img:'image.png',video:'image_video.mp4',cost:0,owned:true,bonus:0,bonusType:'none',reqRebirth:0},
-    {id:'s2',name:'🔵 Продвинутый',desc:'Для опытных',img:'image2.png',video:'image2_video.mp4',cost:500,owned:false,bonus:2,bonusType:'ps',reqRebirth:0},
-    {id:'s3',name:'🟣 Эпический',desc:'Редкий и стильный',img:'image3.png',video:'image3_video.mp4',cost:5000,owned:false,bonus:10,bonusType:'ps',reqRebirth:0},
-    {id:'s4',name:'🟡 Легендарный',desc:'Сияет как золото',img:'image4.png',video:'image4_video.mp4',cost:25000,owned:false,bonus:50,bonusType:'ps',reqRebirth:1},
-    {id:'s5',name:'🔴 Мифический',desc:'Почти невозможно',img:'image5.png',video:'image5_video.mp4',cost:100000,owned:false,bonus:200,bonusType:'ps',reqRebirth:2},
-    {id:'s6',name:'⚫ БЕСКОНЕЧНЫЙ',desc:'Абсолютная мощь',img:'image6.png',video:'image6_video.mp4',cost:1000000,owned:false,bonus:1000,bonusType:'ps',reqRebirth:3}
+    {id:'default',  name:'🟢 Стандартный',   desc:'Начальный',               img:'image.png',   video:'image_video.mp4',   cost:0,       owned:true,  bonus:0,       bonusType:'none', reqRebirth:0},
+    {id:'s2',       name:'🔵 Продвинутый',   desc:'Для опытных',             img:'image2.png',  video:'image2_video.mp4',  cost:500,     owned:false, bonus:2,       bonusType:'ps',   reqRebirth:0},
+    {id:'s3',       name:'🟣 Эпический',     desc:'Редкий и стильный',       img:'image3.png',  video:'image3_video.mp4',  cost:5000,    owned:false, bonus:10,      bonusType:'ps',   reqRebirth:0},
+    {id:'s4',       name:'🟡 Легендарный',   desc:'Сияет как золото',        img:'image4.png',  video:'image4_video.mp4',  cost:25000,   owned:false, bonus:50,      bonusType:'ps',   reqRebirth:1},
+    {id:'s5',       name:'🔴 Мифический',    desc:'Почти невозможно',        img:'image5.png',  video:'image5_video.mp4',  cost:100000,  owned:false, bonus:200,     bonusType:'ps',   reqRebirth:2},
+    {id:'s6',       name:'⚫ БЕСКОНЕЧНЫЙ',   desc:'Абсолютная мощь',         img:'image6.png',  video:'image6_video.mp4',  cost:1000000, owned:false, bonus:1000,    bonusType:'ps',   reqRebirth:3},
+    {id:'s7',       name:'🌊 Океанский',     desc:'Глубины океана',          img:'image7.png',  video:'image7_video.mp4',  cost:300000,  owned:false, bonus:500,     bonusType:'ps',   reqRebirth:2},
+    {id:'s8',       name:'🌸 Сакура',        desc:'Цветение вишни',          img:'image8.png',  video:'image8_video.mp4',  cost:800000,  owned:false, bonus:1500,    bonusType:'ps',   reqRebirth:3},
+    {id:'s9',       name:'🔥 Инферно',       desc:'Пылающий хаос',           img:'image9.png',  video:'image9_video.mp4',  cost:2000000, owned:false, bonus:3000,    bonusType:'ps',   reqRebirth:3},
+    {id:'s10',      name:'❄️ Ледяной',       desc:'Кристальный холод',       img:'image10.png', video:'image10_video.mp4', cost:5000000, owned:false, bonus:7000,    bonusType:'ps',   reqRebirth:4},
+    {id:'s11',      name:'⚡ Молния',        desc:'Скорость света',          img:'image11.png', video:'image11_video.mp4', cost:10000000,owned:false, bonus:15000,   bonusType:'ps',   reqRebirth:4},
+    {id:'s12',      name:'🌌 Небула',        desc:'Туманность вселенной',    img:'image12.png', video:'image12_video.mp4', cost:25000000,owned:false, bonus:35000,   bonusType:'ps',   reqRebirth:5},
+    {id:'s13',      name:'🐉 Дракон',        desc:'Сила древнего дракона',   img:'image13.png', video:'image13_video.mp4', cost:50000000,owned:false, bonus:70000,   bonusType:'ps',   reqRebirth:5},
+    {id:'s14',      name:'💎 Кристалл',      desc:'Первозданная чистота',    img:'image14.png', video:'image14_video.mp4', cost:1e8,     owned:false, bonus:150000,  bonusType:'ps',   reqRebirth:6},
+    {id:'s15',      name:'🌈 Радуга',        desc:'Все цвета бытия',         img:'image15.png', video:'image15_video.mp4', cost:2.5e8,   owned:false, bonus:350000,  bonusType:'ps',   reqRebirth:6},
+    {id:'s16',      name:'👁️ Всевидящий',   desc:'Взгляд сквозь реальность',img:'image16.png', video:'image16_video.mp4', cost:5e8,     owned:false, bonus:750000,  bonusType:'ps',   reqRebirth:7},
+    {id:'s17',      name:'🌀 АБСОЛЮТ',       desc:'За пределами существования',img:'image17.png',video:'image17_video.mp4',cost:1e9,    owned:false, bonus:1500000, bonusType:'ps',   reqRebirth:7},
 ];
 let activeSkin='default';
 
@@ -411,12 +506,12 @@ let activeSkin='default';
 // ФОНЫ
 // =============================================
 const bgs=[
-    {id:'bg_default',name:'⬜ Стандартный',desc:'Классический светлый',icon:'⬜',cost:0,owned:true,cls:'',dark:false,bonus:0,bonusType:'none',reqRebirth:0,warn:false},
-    {id:'bg_blue',name:'🔵 Голубой бриз',desc:'Лёгкий голубой',icon:'🔵',cost:800,owned:false,cls:'bg-blue',dark:false,bonus:3,bonusType:'ps',reqRebirth:0,warn:true},
-    {id:'bg_lavender',name:'🟣 Лавандовый',desc:'Мягкий фиолетовый',icon:'🟣',cost:8000,owned:false,cls:'bg-lavender',dark:false,bonus:15,bonusType:'ps',reqRebirth:0,warn:true},
-    {id:'bg_sunset',name:'🌅 Закат',desc:'Анимированный тёплый',icon:'🌅',cost:40000,owned:false,cls:'bg-sunset',dark:false,bonus:80,bonusType:'ps',reqRebirth:1,warn:true},
-    {id:'bg_aurora',name:'🌌 Северное сияние',desc:'Переливающийся',icon:'🌌',cost:200000,owned:false,cls:'bg-aurora',dark:false,bonus:300,bonusType:'ps',reqRebirth:2,warn:true},
-    {id:'bg_space',name:'🪐 Космос',desc:'Глубокий космос',icon:'🪐',cost:2000000,owned:false,cls:'bg-space',dark:true,bonus:1500,bonusType:'ps',reqRebirth:3,warn:true}
+    {id:'bg_default',name:'⬜ Стандартный', desc:'Классический светлый',      icon:'⬜',cost:0,      owned:true, cls:'',          dark:false,bonus:0,     bonusType:'none',reqRebirth:0,warn:false},
+    {id:'bg_blue',   name:'🔵 Голубой бриз',desc:'Лёгкий голубой',           icon:'🔵',cost:800,    owned:false,cls:'bg-blue',    dark:false,bonus:3,     bonusType:'ps',  reqRebirth:0,warn:true},
+    {id:'bg_lavender',name:'🟣 Лавандовый', desc:'Мягкий фиолетовый',        icon:'🟣',cost:8000,   owned:false,cls:'bg-lavender',dark:false,bonus:15,    bonusType:'ps',  reqRebirth:0,warn:true},
+    {id:'bg_sunset', name:'🌅 Закат',        desc:'Анимированный тёплый',     icon:'🌅',cost:40000,  owned:false,cls:'bg-sunset',  dark:false,bonus:80,    bonusType:'ps',  reqRebirth:1,warn:true},
+    {id:'bg_aurora', name:'🌌 Северное сияние',desc:'Переливающийся',         icon:'🌌',cost:200000, owned:false,cls:'bg-aurora',  dark:false,bonus:300,   bonusType:'ps',  reqRebirth:2,warn:true},
+    {id:'bg_space',  name:'🪐 Космос',       desc:'Глубокий космос',          icon:'🪐',cost:2000000,owned:false,cls:'bg-space',   dark:true, bonus:1500,  bonusType:'ps',  reqRebirth:3,warn:true}
 ];
 let activeBg='bg_default';
 
@@ -424,228 +519,109 @@ let activeBg='bg_default';
 // ЭФФЕКТЫ
 // =============================================
 const fxList=[
-    {id:'fx_default',name:'🔵 Стандартный',desc:'Базовые искры',icon:'🔵',cost:0,owned:true,bonus:0,bonusType:'none',reqRebirth:0},
-    {id:'fx_green',name:'🟢 Изумрудный',desc:'Зелёный блеск',icon:'🟢',cost:600,owned:false,bonus:1,bonusType:'click',reqRebirth:0},
-    {id:'fx_rainbow',name:'🌈 Радужный',desc:'Все цвета + двойное кольцо',icon:'🌈',cost:6000,owned:false,bonus:5,bonusType:'click',reqRebirth:0},
-    {id:'fx_fire',name:'🔥 Огненный',desc:'Пламя + угольки',icon:'🔥',cost:30000,owned:false,bonus:20,bonusType:'click',reqRebirth:1},
-    {id:'fx_electric',name:'⚡ Электрический',desc:'Молнии + разряды',icon:'⚡',cost:150000,owned:false,bonus:75,bonusType:'click',reqRebirth:2},
-    {id:'fx_cosmic',name:'🌌 Космический',desc:'Звёзды + туманности',icon:'🌌',cost:1500000,owned:false,bonus:500,bonusType:'click',reqRebirth:3}
+    {id:'fx_default', name:'🔵 Стандартный',  desc:'Базовые искры',              icon:'🔵',cost:0,      owned:true, bonus:0,   bonusType:'none', reqRebirth:0},
+    {id:'fx_green',   name:'🟢 Изумрудный',   desc:'Зелёный блеск',             icon:'🟢',cost:600,    owned:false,bonus:1,   bonusType:'click',reqRebirth:0},
+    {id:'fx_rainbow', name:'🌈 Радужный',      desc:'Все цвета + двойное кольцо',icon:'🌈',cost:6000,   owned:false,bonus:5,   bonusType:'click',reqRebirth:0},
+    {id:'fx_fire',    name:'🔥 Огненный',      desc:'Пламя + угольки',           icon:'🔥',cost:30000,  owned:false,bonus:20,  bonusType:'click',reqRebirth:1},
+    {id:'fx_electric',name:'⚡ Электрический', desc:'Молнии + разряды',           icon:'⚡',cost:150000, owned:false,bonus:75,  bonusType:'click',reqRebirth:2},
+    {id:'fx_cosmic',  name:'🌌 Космический',   desc:'Звёзды + туманности',       icon:'🌌',cost:1500000,owned:false,bonus:500, bonusType:'click',reqRebirth:3}
 ];
 let activeFx='fx_default';
 
 const fxConfigs={
-    fx_default:{colors:['#090949','#3b7bbf','#5ca0e0','#2c5f8a','#aaa'],cnt:8,sz:[2,4],dist:[30,50],ring:'rgba(9,9,73,.5)',flash:'rgba(9,9,73,.35)',flt:'#090949'},
-    fx_green:{colors:['#27ae60','#2ecc71','#1abc9c','#16a085','#a8e6cf','#55efc4','#00b894','#dfe'],cnt:13,sz:[2,5],dist:[35,55],ring:'rgba(46,204,113,.6)',flash:'rgba(46,204,113,.45)',flt:'#27ae60'},
-    fx_rainbow:{colors:['#e74c3c','#e67e22','#f1c40f','#2ecc71','#3498db','#9b59b6','#e91e63','#00bcd4','#ff6b6b','#a29bfe'],cnt:18,sz:[3,5],dist:[40,65],ring:'rgba(155,89,182,.6)',flash:'rgba(241,196,15,.5)',flt:'#9b59b6'},
-    fx_fire:{colors:['#e74c3c','#e67e22','#f39c12','#f1c40f','#ff6b6b','#ff9ff3','#ff6348','#ffa502','#ffbe76','#fff'],cnt:16,sz:[3,6],dist:[35,65],ring:'rgba(231,76,60,.7)',flash:'rgba(255,165,0,.55)',flt:'#e74c3c'},
-    fx_electric:{colors:['#00d2ff','#3a7bd5','#00f2fe','#4facfe','#43e97b','#fff','#a8edea','#e0c3fc','#74b9ff','#dfe6e9'],cnt:16,sz:[2,5],dist:[40,75],ring:'rgba(0,210,255,.7)',flash:'rgba(0,210,255,.6)',flt:'#00d2ff'},
-    fx_cosmic:{colors:['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#9b59b6','#fff','#e84393','#00cec9','#fdcb6e','#a29bfe','#fd79a8','#55efc4'],cnt:24,sz:[2,7],dist:[50,90],ring:'rgba(155,89,182,.5)',flash:'rgba(253,203,110,.5)',flt:'#a29bfe'}
+    fx_default: {colors:['#090949','#3b7bbf','#5ca0e0','#2c5f8a','#aaa'],                                                                                          cnt:8, sz:[2,4],dist:[30,50],ring:'rgba(9,9,73,.5)',   flash:'rgba(9,9,73,.35)',  flt:'#090949'},
+    fx_green:   {colors:['#27ae60','#2ecc71','#1abc9c','#16a085','#a8e6cf','#55efc4','#00b894','#dfe'],                                                             cnt:13,sz:[2,5],dist:[35,55],ring:'rgba(46,204,113,.6)',flash:'rgba(46,204,113,.45)',flt:'#27ae60'},
+    fx_rainbow: {colors:['#e74c3c','#e67e22','#f1c40f','#2ecc71','#3498db','#9b59b6','#e91e63','#00bcd4','#ff6b6b','#a29bfe'],                                      cnt:18,sz:[3,5],dist:[40,65],ring:'rgba(155,89,182,.6)',flash:'rgba(241,196,15,.5)',flt:'#9b59b6'},
+    fx_fire:    {colors:['#e74c3c','#e67e22','#f39c12','#f1c40f','#ff6b6b','#ff9ff3','#ff6348','#ffa502','#ffbe76','#fff'],                                         cnt:16,sz:[3,6],dist:[35,65],ring:'rgba(231,76,60,.7)', flash:'rgba(255,165,0,.55)',flt:'#e74c3c'},
+    fx_electric:{colors:['#00d2ff','#3a7bd5','#00f2fe','#4facfe','#43e97b','#fff','#a8edea','#e0c3fc','#74b9ff','#dfe6e9'],                                          cnt:16,sz:[2,5],dist:[40,75],ring:'rgba(0,210,255,.7)', flash:'rgba(0,210,255,.6)', flt:'#00d2ff'},
+    fx_cosmic:  {colors:['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#9b59b6','#fff','#e84393','#00cec9','#fdcb6e','#a29bfe','#fd79a8','#55efc4'],                     cnt:24,sz:[2,7],dist:[50,90],ring:'rgba(155,89,182,.5)',flash:'rgba(253,203,110,.5)',flt:'#a29bfe'}
 };
 
 // =============================================
-// ЗВУКИ (прокачиваемые)
+// ЗВУКИ
 // =============================================
 const sndList=[
-    {id:'snd_default',name:'🔊 Стандартный',desc:'Простой клик',icon:'🔊',cost:0,owned:true,bonus:0,bonusType:'none',reqRebirth:0},
-    {id:'snd_pop',name:'🫧 Пузырёк',desc:'Мягкий поп',icon:'🫧',cost:400,owned:false,bonus:1,bonusType:'click',reqRebirth:0},
-    {id:'snd_coin',name:'🪙 Монетка',desc:'Звон монеты',icon:'🪙',cost:3000,owned:false,bonus:8,bonusType:'ps',reqRebirth:0},
-    {id:'snd_power',name:'💥 Мощь',desc:'Глубокий удар',icon:'💥',cost:20000,owned:false,bonus:30,bonusType:'click',reqRebirth:1},
-    {id:'snd_zap',name:'⚡ Разряд',desc:'Электро-импульс',icon:'⚡',cost:100000,owned:false,bonus:100,bonusType:'ps',reqRebirth:2},
-    {id:'snd_epic',name:'🎵 Эпический',desc:'Аккорд победы',icon:'🎵',cost:800000,owned:false,bonus:500,bonusType:'click',reqRebirth:3}
+    {id:'snd_default',name:'🔊 Стандартный',desc:'Простой клик',      icon:'🔊',cost:0,     owned:true, bonus:0,  bonusType:'none', reqRebirth:0},
+    {id:'snd_pop',    name:'🫧 Пузырёк',    desc:'Мягкий поп',        icon:'🫧',cost:400,   owned:false,bonus:1,  bonusType:'click',reqRebirth:0},
+    {id:'snd_coin',   name:'🪙 Монетка',    desc:'Звон монеты',        icon:'🪙',cost:3000,  owned:false,bonus:8,  bonusType:'ps',   reqRebirth:0},
+    {id:'snd_power',  name:'💥 Мощь',       desc:'Глубокий удар',      icon:'💥',cost:20000, owned:false,bonus:30, bonusType:'click',reqRebirth:1},
+    {id:'snd_zap',    name:'⚡ Разряд',      desc:'Электро-импульс',   icon:'⚡',cost:100000,owned:false,bonus:100,bonusType:'ps',   reqRebirth:2},
+    {id:'snd_epic',   name:'🎵 Эпический',  desc:'Аккорд победы',      icon:'🎵',cost:800000,owned:false,bonus:500,bonusType:'click',reqRebirth:3}
 ];
 let activeSound='snd_default';
 let soundEnabled=false;
 let audioCtx=null;
 
-function getAudioCtx(){
-    if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-    if(audioCtx.state==='suspended')audioCtx.resume();
-    return audioCtx;
-}
+function getAudioCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();return audioCtx}
 
-// ★ Генерация звуков через Web Audio API
 const soundGenerators={
-    snd_default(ctx){
-        const o=ctx.createOscillator(),g=ctx.createGain();
-        o.type='sine';
-        o.frequency.setValueAtTime(800,ctx.currentTime);
-        o.frequency.exponentialRampToValueAtTime(300,ctx.currentTime+.07);
-        g.gain.setValueAtTime(.18,ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.07);
-        o.connect(g);g.connect(ctx.destination);
-        o.start();o.stop(ctx.currentTime+.07);
-    },
-    snd_pop(ctx){
-        const o=ctx.createOscillator(),g=ctx.createGain();
-        o.type='sine';
-        o.frequency.setValueAtTime(500,ctx.currentTime);
-        o.frequency.exponentialRampToValueAtTime(100,ctx.currentTime+.14);
-        g.gain.setValueAtTime(.22,ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.14);
-        o.connect(g);g.connect(ctx.destination);
-        o.start();o.stop(ctx.currentTime+.14);
-    },
-    snd_coin(ctx){
-        [1400,1760].forEach(f=>{
-            const o=ctx.createOscillator(),g=ctx.createGain();
-            o.type='triangle';o.frequency.value=f;
-            g.gain.setValueAtTime(.1,ctx.currentTime);
-            g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.2);
-            o.connect(g);g.connect(ctx.destination);
-            o.start();o.stop(ctx.currentTime+.2);
-        });
-    },
-    snd_power(ctx){
-        const o=ctx.createOscillator(),o2=ctx.createOscillator(),g=ctx.createGain();
-        o.type='sawtooth';o.frequency.setValueAtTime(80,ctx.currentTime);
-        o.frequency.exponentialRampToValueAtTime(35,ctx.currentTime+.18);
-        o2.type='sine';o2.frequency.setValueAtTime(160,ctx.currentTime);
-        o2.frequency.exponentialRampToValueAtTime(60,ctx.currentTime+.18);
-        g.gain.setValueAtTime(.13,ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.18);
-        o.connect(g);o2.connect(g);g.connect(ctx.destination);
-        o.start();o2.start();o.stop(ctx.currentTime+.18);o2.stop(ctx.currentTime+.18);
-    },
-    snd_zap(ctx){
-        const o=ctx.createOscillator(),g=ctx.createGain();
-        o.type='square';
-        o.frequency.setValueAtTime(2200,ctx.currentTime);
-        o.frequency.exponentialRampToValueAtTime(120,ctx.currentTime+.09);
-        g.gain.setValueAtTime(.07,ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.09);
-        o.connect(g);g.connect(ctx.destination);
-        o.start();o.stop(ctx.currentTime+.09);
-    },
-    snd_epic(ctx){
-        [400,500,600,800].forEach((f,i)=>{
-            const o=ctx.createOscillator(),g=ctx.createGain();
-            o.type='sine';o.frequency.value=f;
-            const t=ctx.currentTime+i*.025;
-            g.gain.setValueAtTime(.08,t);
-            g.gain.exponentialRampToValueAtTime(.001,t+.28);
-            o.connect(g);g.connect(ctx.destination);
-            o.start(t);o.stop(t+.28);
-        });
-    }
+    snd_default(ctx){const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.setValueAtTime(800,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(300,ctx.currentTime+.07);g.gain.setValueAtTime(.18,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.07);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+.07)},
+    snd_pop(ctx){const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.setValueAtTime(500,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(100,ctx.currentTime+.14);g.gain.setValueAtTime(.22,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.14);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+.14)},
+    snd_coin(ctx){[1400,1760].forEach(f=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(.1,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.2);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+.2)})},
+    snd_power(ctx){const o=ctx.createOscillator(),o2=ctx.createOscillator(),g=ctx.createGain();o.type='sawtooth';o.frequency.setValueAtTime(80,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(35,ctx.currentTime+.18);o2.type='sine';o2.frequency.setValueAtTime(160,ctx.currentTime);o2.frequency.exponentialRampToValueAtTime(60,ctx.currentTime+.18);g.gain.setValueAtTime(.13,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.18);o.connect(g);o2.connect(g);g.connect(ctx.destination);o.start();o2.start();o.stop(ctx.currentTime+.18);o2.stop(ctx.currentTime+.18)},
+    snd_zap(ctx){const o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(2200,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(120,ctx.currentTime+.09);g.gain.setValueAtTime(.07,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.09);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+.09)},
+    snd_epic(ctx){[400,500,600,800].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=f;const t=ctx.currentTime+i*.025;g.gain.setValueAtTime(.08,t);g.gain.exponentialRampToValueAtTime(.001,t+.28);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+.28)})}
 };
 
-function playClickSound(){
-    if(!soundEnabled)return;
-    try{
-        const ctx=getAudioCtx();
-        const gen=soundGenerators[activeSound];
-        if(gen)gen(ctx);
-    }catch(e){}
-}
+function playClickSound(){if(!soundEnabled)return;try{const ctx=getAudioCtx();const gen=soundGenerators[activeSound];if(gen)gen(ctx)}catch(e){}}
+function playBuySound(){if(!soundEnabled)return;try{const ctx=getAudioCtx();const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.setValueAtTime(600,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(1200,ctx.currentTime+.12);g.gain.setValueAtTime(.12,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.12);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+.12)}catch(e){}}
+function playLevelSound(){if(!soundEnabled)return;try{const ctx=getAudioCtx();[523,659,784].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=f;const t=ctx.currentTime+i*.08;g.gain.setValueAtTime(.1,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+.2)})}catch(e){}}
 
-function playBuySound(){
-    if(!soundEnabled)return;
-    try{
-        const ctx=getAudioCtx();
-        const o=ctx.createOscillator(),g=ctx.createGain();
-        o.type='sine';
-        o.frequency.setValueAtTime(600,ctx.currentTime);
-        o.frequency.exponentialRampToValueAtTime(1200,ctx.currentTime+.12);
-        g.gain.setValueAtTime(.12,ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.12);
-        o.connect(g);g.connect(ctx.destination);
-        o.start();o.stop(ctx.currentTime+.12);
-    }catch(e){}
-}
-
-function playLevelSound(){
-    if(!soundEnabled)return;
-    try{
-        const ctx=getAudioCtx();
-        [523,659,784].forEach((f,i)=>{
-            const o=ctx.createOscillator(),g=ctx.createGain();
-            o.type='sine';o.frequency.value=f;
-            const t=ctx.currentTime+i*.08;
-            g.gain.setValueAtTime(.1,t);
-            g.gain.exponentialRampToValueAtTime(.001,t+.2);
-            o.connect(g);g.connect(ctx.destination);
-            o.start(t);o.stop(t+.2);
-        });
-    }catch(e){}
-}
-
-// Звуковой тогл с предупреждением
-function toggleSound(){
-    if(!soundEnabled){
-        showSoundWarning();
-    }else{
-        soundEnabled=false;
-        updateSoundToggleUI();
-        saveGame();
-    }
-}
-
-function showSoundWarning(){
-    const ov=document.createElement('div');
-    ov.className='sound-warn-overlay';
-    ov.innerHTML=`<div class="sound-warn-card">
-        <span class="sw-icon">🔊⚠️</span>
-        <h3>Включить звук?</h3>
-        <p>Если ты <span class="sw-danger">В ШКОЛЕ</span> — <b>НЕ ВКЛЮЧАЙ!</b><br>Учитель <b>100% услышит</b> и подойдёт к тебе!<br><br>Включай только если ты <b>дома</b> или в <b>наушниках</b>.</p>
-        <div class="sw-btns">
-            <button class="sw-confirm" onclick="confirmSoundOn();this.closest('.sound-warn-overlay').remove()">🏠 Я дома, включай!</button>
-            <button class="sw-cancel" onclick="this.closest('.sound-warn-overlay').remove()">🏫 Я в школе, не надо</button>
-        </div>
-    </div>`;
-    document.body.appendChild(ov);
-}
-
-function confirmSoundOn(){
-    soundEnabled=true;
-    updateSoundToggleUI();
-    // Тестовый звук
-    try{const ctx=getAudioCtx();soundGenerators[activeSound](ctx)}catch(e){}
-    saveGame();
-}
-
-function updateSoundToggleUI(){
-    const btn=document.getElementById('soundToggle');
-    if(soundEnabled){
-        btn.textContent='🔊 Звук ВКЛ';
-        btn.classList.add('on');
-    }else{
-        btn.textContent='🔇 Звук ВЫКЛ';
-        btn.classList.remove('on');
-    }
-}
+function toggleSound(){if(!soundEnabled){showSoundWarning()}else{soundEnabled=false;updateSoundToggleUI();saveGame()}}
+function showSoundWarning(){const ov=document.createElement('div');ov.className='sound-warn-overlay';ov.innerHTML=`<div class="sound-warn-card"><span class="sw-icon">🔊⚠️</span><h3>Включить звук?</h3><p>Если ты <span class="sw-danger">В ШКОЛЕ</span> — <b>НЕ ВКЛЮЧАЙ!</b><br>Учитель <b>100% услышит</b> и подойдёт к тебе!<br><br>Включай только если ты <b>дома</b> или в <b>наушниках</b>.</p><div class="sw-btns"><button class="sw-confirm" onclick="confirmSoundOn();this.closest('.sound-warn-overlay').remove()">🏠 Я дома, включай!</button><button class="sw-cancel" onclick="this.closest('.sound-warn-overlay').remove()">🏫 Я в школе, не надо</button></div></div>`;document.body.appendChild(ov)}
+function confirmSoundOn(){soundEnabled=true;updateSoundToggleUI();try{const ctx=getAudioCtx();soundGenerators[activeSound](ctx)}catch(e){}saveGame()}
+function updateSoundToggleUI(){const btn=document.getElementById('soundToggle');if(soundEnabled){btn.textContent='🔊 Звук ВКЛ';btn.classList.add('on')}else{btn.textContent='🔇 Звук ВЫКЛ';btn.classList.remove('on')}}
 
 // =============================================
 // ДАННЫЕ ИГРЫ
 // =============================================
-let game={score:0,totalEarned:0,totalClicks:0,totalUpgradesBought:0,clickPower:1,perSecond:0,level:1,levelProgress:0,startTime:Date.now(),buyAmount:1,rebirths:0,rebirthMult:1};
+let game={
+    score:0,totalEarned:0,totalClicks:0,totalUpgradesBought:0,
+    clickPower:1,perSecond:0,level:1,levelProgress:0,
+    startTime:Date.now(),buyAmount:1,rebirths:0,rebirthMult:1,
+    // ВАЛЮТА
+    currency:0,totalCurrency:0,currencyPerClick:1,currencyPerSecond:0
+};
 
 const upgrades=[
-    {id:'cursor',name:'👆 Быстрый ввод',desc:'+1 к силе',icon:'👆',baseCost:15,costMult:1.15,level:0,type:'click',value:1},
-    {id:'double',name:'✌️ Двойной ответ',desc:'+3 к силе',icon:'✌️',baseCost:100,costMult:1.18,level:0,type:'click',value:3},
-    {id:'auto',name:'🤖 Авто-решатель',desc:'+1 балл/сек',icon:'🤖',baseCost:50,costMult:1.15,level:0,type:'auto',value:1},
-    {id:'robot',name:'🦾 ИИ-помощник',desc:'+5 б/сек',icon:'🦾',baseCost:300,costMult:1.17,level:0,type:'auto',value:5},
-    {id:'server',name:'🖥️ Сервер',desc:'+20 б/сек',icon:'🖥️',baseCost:1500,costMult:1.2,level:0,type:'auto',value:20},
-    {id:'super',name:'💥 Суперкод',desc:'+15 к силе',icon:'💥',baseCost:2000,costMult:1.2,level:0,type:'click',value:15},
-    {id:'lab',name:'🔬 Лаборатория',desc:'+100 б/сек',icon:'🔬',baseCost:10000,costMult:1.22,level:0,type:'auto',value:100},
-    {id:'algo',name:'⚡ Алгоритм',desc:'+50 к силе',icon:'⚡',baseCost:15000,costMult:1.25,level:0,type:'click',value:50},
-    {id:'cloud',name:'☁️ Облако',desc:'+500 б/сек',icon:'☁️',baseCost:75000,costMult:1.25,level:0,type:'auto',value:500},
-    {id:'quantum',name:'⚛️ Квантовый ПК',desc:'+2500 б/сек',icon:'⚛️',baseCost:500000,costMult:1.28,level:0,type:'auto',value:2500},
-    {id:'matrix',name:'🧠 Нейросеть',desc:'+250 к силе',icon:'🧠',baseCost:250000,costMult:1.3,level:0,type:'click',value:250},
-    {id:'sing',name:'🌀 Сингулярность',desc:'+10000 б/сек',icon:'🌀',baseCost:5000000,costMult:1.3,level:0,type:'auto',value:10000}
+    {id:'cursor', name:'👆 Быстрый ввод',  desc:'+1 к силе',      icon:'👆',baseCost:15,     costMult:1.15,level:0,type:'click',value:1},
+    {id:'double', name:'✌️ Двойной ответ', desc:'+3 к силе',      icon:'✌️',baseCost:100,    costMult:1.18,level:0,type:'click',value:3},
+    {id:'auto',   name:'🤖 Авто-решатель', desc:'+1 балл/сек',    icon:'🤖',baseCost:50,     costMult:1.15,level:0,type:'auto', value:1},
+    {id:'robot',  name:'🦾 ИИ-помощник',   desc:'+5 б/сек',       icon:'🦾',baseCost:300,    costMult:1.17,level:0,type:'auto', value:5},
+    {id:'server', name:'🖥️ Сервер',        desc:'+20 б/сек',      icon:'🖥️',baseCost:1500,   costMult:1.2, level:0,type:'auto', value:20},
+    {id:'super',  name:'💥 Суперкод',      desc:'+15 к силе',     icon:'💥',baseCost:2000,   costMult:1.2, level:0,type:'click',value:15},
+    {id:'lab',    name:'🔬 Лаборатория',   desc:'+100 б/сек',     icon:'🔬',baseCost:10000,  costMult:1.22,level:0,type:'auto', value:100},
+    {id:'algo',   name:'⚡ Алгоритм',      desc:'+50 к силе',     icon:'⚡',baseCost:15000,  costMult:1.25,level:0,type:'click',value:50},
+    {id:'cloud',  name:'☁️ Облако',        desc:'+500 б/сек',     icon:'☁️',baseCost:75000,  costMult:1.25,level:0,type:'auto', value:500},
+    {id:'quantum',name:'⚛️ Квантовый ПК',  desc:'+2500 б/сек',    icon:'⚛️',baseCost:500000, costMult:1.28,level:0,type:'auto', value:2500},
+    {id:'matrix', name:'🧠 Нейросеть',     desc:'+250 к силе',    icon:'🧠',baseCost:250000, costMult:1.3, level:0,type:'click',value:250},
+    {id:'sing',   name:'🌀 Сингулярность', desc:'+10000 б/сек',   icon:'🌀',baseCost:5000000,costMult:1.3, level:0,type:'auto', value:10000}
+];
+
+// Улучшения валюты
+const currencyUpgrades=[
+    {id:'cminer',  name:'⛏️ Монетокоп',    desc:'+1 монету/клик',  icon:'⛏️', baseCost:20,    costMult:1.2, level:0,type:'cclick',value:1},
+    {id:'cboost',  name:'💰 Кошелёк',      desc:'+2 монеты/клик',  icon:'💰', baseCost:200,   costMult:1.2, level:0,type:'cclick',value:2},
+    {id:'cfarm',   name:'🏦 Банк',         desc:'+5 монет/сек',    icon:'🏦', baseCost:500,   costMult:1.22,level:0,type:'cauto', value:5},
+    {id:'cstake',  name:'📈 Инвестиции',   desc:'+20 монет/сек',   icon:'📈', baseCost:5000,  costMult:1.25,level:0,type:'cauto', value:20},
+    {id:'cmine',   name:'🏭 Завод',        desc:'+100 монет/сек',  icon:'🏭', baseCost:50000, costMult:1.28,level:0,type:'cauto', value:100},
+    {id:'cquant',  name:'🔮 Монет-машина', desc:'+500 монет/сек',  icon:'🔮', baseCost:500000,costMult:1.3, level:0,type:'cauto', value:500},
 ];
 
 const achievements=[
-    {id:'c10',name:'🏅 Первые шаги',desc:'10 ответов',check:()=>game.totalClicks>=10},
-    {id:'c100',name:'🎖️ Ученик',desc:'100 ответов',check:()=>game.totalClicks>=100},
-    {id:'c1k',name:'🏆 Отличник',desc:'1 000 ответов',check:()=>game.totalClicks>=1000},
-    {id:'e1k',name:'📊 1K баллов',desc:'Набери 1 000',check:()=>game.totalEarned>=1000},
-    {id:'e100k',name:'💎 100K баллов',desc:'Набери 100 000',check:()=>game.totalEarned>=100000},
-    {id:'e1m',name:'👑 Миллион',desc:'Набери 1 000 000',check:()=>game.totalEarned>=1000000},
-    {id:'l5',name:'⭐ Уровень 5',desc:'Достигни 5 уровня',check:()=>game.level>=5},
-    {id:'l10',name:'🌟 Уровень 10',desc:'Достигни 10 уровня',check:()=>game.level>=10},
-    {id:'rb1',name:'🔄 Первое перерождение',desc:'Переродись 1 раз',check:()=>game.rebirths>=1},
-    {id:'rb3',name:'🔄 3 перерождения',desc:'Переродись 3 раза',check:()=>game.rebirths>=3},
-    {id:'rb5',name:'🔄 5 перерождений',desc:'Переродись 5 раз',check:()=>game.rebirths>=5},
+    {id:'c10',  name:'🏅 Первые шаги',        desc:'10 ответов',              check:()=>game.totalClicks>=10},
+    {id:'c100', name:'🎖️ Ученик',             desc:'100 ответов',             check:()=>game.totalClicks>=100},
+    {id:'c1k',  name:'🏆 Отличник',           desc:'1 000 ответов',           check:()=>game.totalClicks>=1000},
+    {id:'e1k',  name:'📊 1K баллов',          desc:'Набери 1 000',            check:()=>game.totalEarned>=1000},
+    {id:'e100k',name:'💎 100K баллов',         desc:'Набери 100 000',          check:()=>game.totalEarned>=100000},
+    {id:'e1m',  name:'👑 Миллион',            desc:'Набери 1 000 000',        check:()=>game.totalEarned>=1000000},
+    {id:'cur1k',name:'🪙 1K монет',           desc:'Собери 1 000 монет',      check:()=>game.totalCurrency>=1000},
+    {id:'cur1m',name:'🪙 1M монет',           desc:'Собери 1 000 000 монет',  check:()=>game.totalCurrency>=1000000},
+    {id:'l5',   name:'⭐ Уровень 5',          desc:'Достигни 5 уровня',       check:()=>game.level>=5},
+    {id:'l10',  name:'🌟 Уровень 10',         desc:'Достигни 10 уровня',      check:()=>game.level>=10},
+    {id:'rb1',  name:'🔄 Первое перерождение',desc:'Переродись 1 раз',        check:()=>game.rebirths>=1},
+    {id:'rb3',  name:'🔄 3 перерождения',     desc:'Переродись 3 раза',       check:()=>game.rebirths>=3},
+    {id:'rb5',  name:'🔄 5 перерождений',     desc:'Переродись 5 раз',        check:()=>game.rebirths>=5},
 ];
 let unlockedAch=new Set();
 
@@ -654,68 +630,76 @@ let unlockedAch=new Set();
 // =============================================
 function getCost(u,c=1){let t=0;for(let i=0;i<c;i++)t+=Math.floor(u.baseCost*Math.pow(u.costMult,u.level+i));return t}
 function fmt(n){if(n>=1e15)return(n/1e15).toFixed(2)+'Q';if(n>=1e12)return(n/1e12).toFixed(2)+'T';if(n>=1e9)return(n/1e9).toFixed(2)+'B';if(n>=1e6)return(n/1e6).toFixed(2)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return Math.floor(n).toString()}
+function curIcon(){return`<img src="Currency.png" class="cur-icon" onerror="this.style.display='none'">`}
 
 function recalc(){
-    let cp=1,ps=0;
+    let cp=1,ps=0,cpc=1,cps=0;
     for(const u of upgrades){if(u.type==='click')cp+=u.value*u.level;if(u.type==='auto')ps+=u.value*u.level}
-    const allItems=[
-        skins.find(s=>s.id===activeSkin),
-        bgs.find(b=>b.id===activeBg),
-        fxList.find(f=>f.id===activeFx),
-        sndList.find(s=>s.id===activeSound)
-    ];
-    for(const it of allItems){
-        if(!it)continue;
-        if(it.bonusType==='ps')ps+=it.bonus;
-        if(it.bonusType==='click')cp+=it.bonus;
-    }
-    cp=Math.floor(cp*game.rebirthMult);
-    ps=Math.floor(ps*game.rebirthMult);
-    game.clickPower=cp;game.perSecond=ps;
+    for(const u of currencyUpgrades){if(u.type==='cclick')cpc+=u.value*u.level;if(u.type==='cauto')cps+=u.value*u.level}
+    const allItems=[skins.find(s=>s.id===activeSkin),bgs.find(b=>b.id===activeBg),fxList.find(f=>f.id===activeFx),sndList.find(s=>s.id===activeSound)];
+    for(const it of allItems){if(!it)continue;if(it.bonusType==='ps')ps+=it.bonus;if(it.bonusType==='click')cp+=it.bonus}
+    cp=Math.floor(cp*game.rebirthMult);ps=Math.floor(ps*game.rebirthMult);
+    cpc=Math.floor(cpc*game.rebirthMult);cps=Math.floor(cps*game.rebirthMult);
+    game.clickPower=cp;game.perSecond=ps;game.currencyPerClick=cpc;game.currencyPerSecond=cps;
 }
 
-function setBuyAmount(n){game.buyAmount=n;document.querySelectorAll('.buy-toggle button').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');renderUp()}
-
-function getBonusText(item){
-    if(item.bonusType==='ps'&&item.bonus>0)return '+'+fmt(item.bonus)+' б/сек';
-    if(item.bonusType==='click'&&item.bonus>0)return '+'+fmt(item.bonus)+' к силе клика';
-    return '';
-}
+function setBuyAmount(n,btn){game.buyAmount=n;document.querySelectorAll('.buy-toggle button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderUp()}
+function getBonusText(item){if(item.bonusType==='ps'&&item.bonus>0)return'+'+fmt(item.bonus)+' б/сек';if(item.bonusType==='click'&&item.bonus>0)return'+'+fmt(item.bonus)+' к силе клика';return''}
 
 // =============================================
-// ★ РОБАСТНАЯ ВИДЕО-СИСТЕМА (главная кнопка)
+// 3D КНОПКА — TILT EFFECT
 // =============================================
+const clickBtnWrap=document.getElementById('clickBtnWrap');
 const clickBtn=document.getElementById('clickBtn');
 const clickBtnImg=document.getElementById('clickBtnImg');
 const clickBtnVideo=document.getElementById('clickBtnVideo');
+
+let tiltActive=false;
+const MAX_TILT=18; // градусы
+
+clickBtnWrap.addEventListener('mousemove',e=>{
+    const r=clickBtnWrap.getBoundingClientRect();
+    const x=e.clientX-r.left;
+    const y=e.clientY-r.top;
+    const cx=r.width/2;
+    const cy=r.height/2;
+    const rotX=-((y-cy)/cy)*MAX_TILT;
+    const rotY=((x-cx)/cx)*MAX_TILT;
+    // Shadow follows opposite to tilt
+    const sx=-(rotY/MAX_TILT)*14;
+    const sy=(rotX/MAX_TILT)*14;
+    clickBtn.style.transform=`rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    clickBtn.style.setProperty('--tilt-shadow-x',sx+'px');
+    clickBtn.style.setProperty('--tilt-shadow-y',sy+'px');
+    if(!tiltActive){tiltActive=true;clickBtnWrap.classList.add('tilt-active')}
+});
+
+clickBtnWrap.addEventListener('mouseleave',()=>{
+    tiltActive=false;
+    clickBtnWrap.classList.remove('tilt-active');
+    clickBtn.style.transform='rotateX(0deg) rotateY(0deg)';
+});
+
+// =============================================
+// ВИДЕО ГЛАВНОЙ КНОПКИ
+// =============================================
 let mainVideoSession=0;
 
 function updateMainButtonVideo(){
     const sk=skins.find(s=>s.id===activeSkin);
-    if(sk&&sk.video){
-        clickBtnVideo.src=sk.video;
-        clickBtnVideo.load();
-    }else{
-        clickBtnVideo.removeAttribute('src');
-    }
+    if(sk&&sk.video){clickBtnVideo.src=sk.video;clickBtnVideo.load()}
+    else{clickBtnVideo.removeAttribute('src')}
 }
 
-clickBtn.addEventListener('mouseenter',()=>{
+clickBtnWrap.addEventListener('mouseenter',()=>{
     const session=++mainVideoSession;
     if(!clickBtnVideo.getAttribute('src'))return;
     clickBtnVideo.currentTime=0;
     const p=clickBtnVideo.play();
-    if(p)p.then(()=>{
-        if(mainVideoSession===session){
-            clickBtnVideo.style.opacity='1';
-            clickBtnImg.style.opacity='0';
-        }else{
-            try{clickBtnVideo.pause();clickBtnVideo.currentTime=0}catch(e){}
-        }
-    }).catch(()=>{});
+    if(p)p.then(()=>{if(mainVideoSession===session){clickBtnVideo.style.opacity='1';clickBtnImg.style.opacity='0'}else{try{clickBtnVideo.pause();clickBtnVideo.currentTime=0}catch(e){}}}).catch(()=>{});
 });
 
-clickBtn.addEventListener('mouseleave',()=>{
+clickBtnWrap.addEventListener('mouseleave',()=>{
     mainVideoSession++;
     clickBtnVideo.style.opacity='0';
     clickBtnImg.style.opacity='1';
@@ -723,97 +707,58 @@ clickBtn.addEventListener('mouseleave',()=>{
     setTimeout(()=>{try{vid.pause();vid.currentTime=0}catch(e){}},500);
 });
 
-clickBtnVideo.addEventListener('ended',()=>{
-    mainVideoSession++;
-    clickBtnVideo.style.opacity='0';
-    clickBtnImg.style.opacity='1';
-});
+clickBtnVideo.addEventListener('ended',()=>{mainVideoSession++;clickBtnVideo.style.opacity='0';clickBtnImg.style.opacity='1'});
 
 // =============================================
-// ★ РЕНДЕР СКИНОВ (с видео-превью)
+// РЕНДЕР СКИНОВ
 // =============================================
 function renderSkins(){
-    const list=document.getElementById('skins-list');
-    list.innerHTML='';
+    const list=document.getElementById('skins-list');list.innerHTML='';
     skins.forEach((item,i)=>{
         const isActive=activeSkin===item.id;
-        const can=!item.owned&&game.score>=item.cost;
+        const can=!item.owned&&game.currency>=item.cost;
         const rbLocked=item.reqRebirth>game.rebirths;
         const c=document.createElement('div');
         c.className='shop-card'+(isActive?' s-active':'')+(!item.owned?' s-locked':'');
         c.dataset.cost=item.cost;
-
         let bonusHTML=getBonusText(item)?`<div class="shop-bonus">🎁 ${getBonusText(item)}</div>`:'';
         let action='';
         if(isActive)action='<span class="shop-badge equipped">✓</span>';
         else if(item.owned)action='<span class="shop-badge owned" data-equip="1">Надеть</span>';
         else if(rbLocked)action=`<button class="shop-buy rb-locked" disabled>🔒 ${item.reqRebirth} перерожд.</button>`;
-        else action=`<button class="shop-buy" data-buy="1" ${can?'':'disabled'}>💰 ${fmt(item.cost)}</button>`;
-
+        else action=`<button class="shop-buy" data-buy="1" ${can?'':'disabled'}>${curIcon()} ${fmt(item.cost)}</button>`;
         c.innerHTML=`<div class="shop-preview"><img src="${item.img}" onerror="this.src='image.png'"></div>
             <div class="shop-info"><div class="shop-name">${item.name}</div><div class="shop-desc">${item.desc}</div>${bonusHTML}</div>${action}`;
-
-        // Обработчики
         const buyBtn=c.querySelector('[data-buy]');
         if(buyBtn)buyBtn.addEventListener('click',()=>buySkin(i));
         const equipBtn=c.querySelector('[data-equip]');
         if(equipBtn)equipBtn.addEventListener('click',()=>equipSkin(item.id));
-
-        // ★ ВИДЕО HOVER ДЛЯ ПРЕВЬЮ (робастный)
+        // Видео hover
         if(item.video){
             const preview=c.querySelector('.shop-preview');
             const img=preview.querySelector('img');
-            let vid=null;
-            let session=0;
-
+            let vid=null,session=0;
             c.addEventListener('mouseenter',()=>{
                 const s=++session;
-                if(!vid){
-                    vid=document.createElement('video');
-                    vid.muted=true;vid.playsInline=true;
-                    vid.className='preview-video';
-                    vid.src=item.video;vid.preload='auto';
-                    vid.addEventListener('ended',()=>{
-                        session++;
-                        vid.style.opacity='0';
-                        img.style.opacity='1';
-                    });
-                    preview.appendChild(vid);
-                }
+                if(!vid){vid=document.createElement('video');vid.muted=true;vid.playsInline=true;vid.className='preview-video';vid.src=item.video;vid.preload='auto';vid.addEventListener('ended',()=>{session++;vid.style.opacity='0';img.style.opacity='1'});preview.appendChild(vid)}
                 vid.currentTime=0;
                 const p=vid.play();
-                if(p)p.then(()=>{
-                    if(session===s){
-                        vid.style.opacity='1';
-                        img.style.opacity='0';
-                    }else{
-                        try{vid.pause();vid.currentTime=0}catch(e){}
-                    }
-                }).catch(()=>{});
+                if(p)p.then(()=>{if(session===s){vid.style.opacity='1';img.style.opacity='0'}else{try{vid.pause();vid.currentTime=0}catch(e){}}}).catch(()=>{});
             });
-
-            c.addEventListener('mouseleave',()=>{
-                session++;
-                if(vid){vid.style.opacity='0';
-                    const v=vid;
-                    setTimeout(()=>{try{v.pause();v.currentTime=0}catch(e){}},400);
-                }
-                img.style.opacity='1';
-            });
+            c.addEventListener('mouseleave',()=>{session++;if(vid){vid.style.opacity='0';const v=vid;setTimeout(()=>{try{v.pause();v.currentTime=0}catch(e){}},400)}img.style.opacity='1'});
         }
-
         list.appendChild(c);
     });
 }
 
 // =============================================
-// РЕНДЕР ОСТАЛЬНЫХ МАГАЗИНОВ (фоны, эффекты, звуки)
+// РЕНДЕР МАГАЗИНОВ (фоны/эффекты/звуки) — цена в ВАЛЮТЕ
 // =============================================
 function renderIconShop(list,items,activeId,buyFn,equipFn,options={}){
     list.innerHTML='';
     items.forEach((item,i)=>{
         const isActive=activeId===item.id;
-        const can=!item.owned&&game.score>=item.cost;
+        const can=!item.owned&&game.currency>=item.cost;
         const rbLocked=item.reqRebirth>game.rebirths;
         const c=document.createElement('div');
         c.className='shop-card'+(isActive?' s-active':'')+(!item.owned?' s-locked':'');
@@ -821,15 +766,12 @@ function renderIconShop(list,items,activeId,buyFn,equipFn,options={}){
         let preview=`<div class="shop-preview"><span class="shop-preview-icon">${item.icon}</span></div>`;
         let bonusHTML=getBonusText(item)?`<div class="shop-bonus">🎁 ${getBonusText(item)}</div>`:'';
         let warnHTML='';
-        if(options.showWarn){
-            if(item.warn&&!item.owned)warnHTML='<div class="shop-warn">⚠️ Применяй на свой страх и риск!</div>';
-            if(item.warn&&item.owned&&isActive)warnHTML='<div class="shop-warn">⚠️ Повышает шанс что учитель подойдёт!</div>';
-        }
+        if(options.showWarn){if(item.warn&&!item.owned)warnHTML='<div class="shop-warn">⚠️ Применяй на свой страх и риск!</div>';if(item.warn&&item.owned&&isActive)warnHTML='<div class="shop-warn">⚠️ Повышает шанс что учитель подойдёт!</div>'}
         let action='';
         if(isActive)action='<span class="shop-badge equipped">✓</span>';
         else if(item.owned)action=`<span class="shop-badge owned" onclick="${equipFn}('${item.id}')">Надеть</span>`;
         else if(rbLocked)action=`<button class="shop-buy rb-locked" disabled>🔒 ${item.reqRebirth} перерожд.</button>`;
-        else action=`<button class="shop-buy" ${can?'':'disabled'} onclick="${buyFn}(${i})">💰 ${fmt(item.cost)}</button>`;
+        else action=`<button class="shop-buy" ${can?'':'disabled'} onclick="${buyFn}(${i})">${curIcon()} ${fmt(item.cost)}</button>`;
         c.innerHTML=`${preview}<div class="shop-info"><div class="shop-name">${item.name}</div><div class="shop-desc">${item.desc}</div>${bonusHTML}${warnHTML}</div>${action}`;
         list.appendChild(c);
     });
@@ -840,34 +782,24 @@ function renderFxs(){renderIconShop(document.getElementById('fxs-list'),fxList,a
 function renderSnds(){renderIconShop(document.getElementById('snds-list'),sndList,activeSound,'buySnd','equipSnd')}
 
 // =============================================
-// ПОКУПКИ
+// ПОКУПКИ — СКИНЫ/ФОНЫ/ЭФФЕКТЫ/ЗВУКИ СТОЯТ МОНЕТЫ
 // =============================================
 function spawnConfetti(){const cols=['#f44336','#e91e63','#9c27b0','#3f51b5','#03a9f4','#4caf50','#ffeb3b','#ff9800'];for(let i=0;i<40;i++){const p=document.createElement('div');p.classList.add('confetti-piece');p.style.left=Math.random()*100+'vw';p.style.top='-10px';p.style.background=cols[~~(Math.random()*cols.length)];p.style.width=(5+Math.random()*8)+'px';p.style.height=(5+Math.random()*8)+'px';p.style.borderRadius=Math.random()>.5?'50%':'2px';p.style.animationDuration=(1.5+Math.random()*2)+'s';p.style.animationDelay=(Math.random()*.5)+'s';document.body.appendChild(p);setTimeout(()=>p.remove(),4000)}}
 
-function showUnlockOverlay(name,previewHTML,bonusText){
-    const ov=document.createElement('div');ov.classList.add('skin-unlock-overlay');
-    ov.innerHTML=`<div class="unlock-title">🎉 РАЗБЛОКИРОВАНО!</div><div class="unlock-preview">${previewHTML}</div><div class="unlock-name">${name}</div>${bonusText?'<div class="unlock-bonus">🎁 '+bonusText+'</div>':''}<button class="unlock-close" onclick="this.parentElement.remove()">Круто! 🔥</button>`;
-    document.body.appendChild(ov);spawnConfetti();setTimeout(()=>{if(ov.parentElement)ov.remove()},5000);
-}
+function showUnlockOverlay(name,previewHTML,bonusText){const ov=document.createElement('div');ov.classList.add('skin-unlock-overlay');ov.innerHTML=`<div class="unlock-title">🎉 РАЗБЛОКИРОВАНО!</div><div class="unlock-preview">${previewHTML}</div><div class="unlock-name">${name}</div>${bonusText?'<div class="unlock-bonus">🎁 '+bonusText+'</div>':''}<button class="unlock-close" onclick="this.parentElement.remove()">Круто! 🔥</button>`;document.body.appendChild(ov);spawnConfetti();setTimeout(()=>{if(ov.parentElement)ov.remove()},5000)}
 
-function buySkin(i){const s=skins[i];if(s.reqRebirth>game.rebirths||s.owned)return;if(game.score>=s.cost){game.score-=s.cost;s.owned=true;activeSkin=s.id;clickBtnImg.src=s.img;updateMainButtonVideo();clickBtn.classList.add('skin-change');setTimeout(()=>clickBtn.classList.remove('skin-change'),600);recalc();playBuySound();showUnlockOverlay(s.name,`<img src="${s.img}" onerror="this.src='image.png'">`,getBonusText(s));renderAll();saveGame()}}
+function buySkin(i){const s=skins[i];if(s.reqRebirth>game.rebirths||s.owned)return;if(game.currency>=s.cost){game.currency-=s.cost;s.owned=true;activeSkin=s.id;clickBtnImg.src=s.img;updateMainButtonVideo();clickBtn.classList.add('skin-change');setTimeout(()=>clickBtn.classList.remove('skin-change'),600);recalc();playBuySound();showUnlockOverlay(s.name,`<img src="${s.img}" onerror="this.src='image.png'">`,getBonusText(s));renderAll();saveGame()}}
 function equipSkin(id){const s=skins.find(x=>x.id===id);if(s&&s.owned){activeSkin=id;clickBtnImg.src=s.img;updateMainButtonVideo();clickBtn.classList.add('skin-change');setTimeout(()=>clickBtn.classList.remove('skin-change'),600);recalc();playBuySound();renderAll();saveGame()}}
 
-function buyBg(i){const b=bgs[i];if(b.reqRebirth>game.rebirths||b.owned)return;if(game.score>=b.cost){game.score-=b.cost;b.owned=true;activeBg=b.id;applyBg();recalc();playBuySound();showUnlockOverlay(b.name,`<span style="font-size:2.5em">${b.icon}</span>`,getBonusText(b));renderAll();saveGame()}}
+function buyBg(i){const b=bgs[i];if(b.reqRebirth>game.rebirths||b.owned)return;if(game.currency>=b.cost){game.currency-=b.cost;b.owned=true;activeBg=b.id;applyBg();recalc();playBuySound();showUnlockOverlay(b.name,`<span style="font-size:2.5em">${b.icon}</span>`,getBonusText(b));renderAll();saveGame()}}
 function equipBg(id){const b=bgs.find(x=>x.id===id);if(b&&b.owned){activeBg=id;applyBg();recalc();playBuySound();renderAll();saveGame()}}
 function applyBg(){const body=document.body;bgs.forEach(b=>{if(b.cls)body.classList.remove(b.cls)});body.classList.remove('dark-bg');const b=bgs.find(x=>x.id===activeBg);if(b){if(b.cls)body.classList.add(b.cls);if(b.dark)body.classList.add('dark-bg')}}
 
-function buyFx(i){const f=fxList[i];if(f.reqRebirth>game.rebirths||f.owned)return;if(game.score>=f.cost){game.score-=f.cost;f.owned=true;activeFx=f.id;recalc();playBuySound();showUnlockOverlay(f.name,`<span style="font-size:2.5em">${f.icon}</span>`,getBonusText(f));renderAll();saveGame()}}
+function buyFx(i){const f=fxList[i];if(f.reqRebirth>game.rebirths||f.owned)return;if(game.currency>=f.cost){game.currency-=f.cost;f.owned=true;activeFx=f.id;recalc();playBuySound();showUnlockOverlay(f.name,`<span style="font-size:2.5em">${f.icon}</span>`,getBonusText(f));renderAll();saveGame()}}
 function equipFx(id){const f=fxList.find(x=>x.id===id);if(f&&f.owned){activeFx=id;recalc();playBuySound();renderAll();saveGame()}}
 
-function buySnd(i){const s=sndList[i];if(s.reqRebirth>game.rebirths||s.owned)return;if(game.score>=s.cost){game.score-=s.cost;s.owned=true;activeSound=s.id;recalc();playBuySound();
-    // Проиграть превью нового звука
-    if(soundEnabled){try{const ctx=getAudioCtx();soundGenerators[s.id](ctx)}catch(e){}}
-    showUnlockOverlay(s.name,`<span style="font-size:2.5em">${s.icon}</span>`,getBonusText(s));renderAll();saveGame()}}
-function equipSnd(id){const s=sndList.find(x=>x.id===id);if(s&&s.owned){activeSound=id;recalc();
-    // Проиграть превью
-    if(soundEnabled){try{const ctx=getAudioCtx();soundGenerators[id](ctx)}catch(e){}}
-    renderAll();saveGame()}}
+function buySnd(i){const s=sndList[i];if(s.reqRebirth>game.rebirths||s.owned)return;if(game.currency>=s.cost){game.currency-=s.cost;s.owned=true;activeSound=s.id;recalc();if(soundEnabled){try{const ctx=getAudioCtx();soundGenerators[s.id](ctx)}catch(e){}}playBuySound();showUnlockOverlay(s.name,`<span style="font-size:2.5em">${s.icon}</span>`,getBonusText(s));renderAll();saveGame()}}
+function equipSnd(id){const s=sndList.find(x=>x.id===id);if(s&&s.owned){activeSound=id;recalc();if(soundEnabled){try{const ctx=getAudioCtx();soundGenerators[id](ctx)}catch(e){}}renderAll();saveGame()}}
 
 // =============================================
 // ПЕРЕРОЖДЕНИЕ
@@ -879,7 +811,7 @@ function showRebirthConfirm(){
     const nextMult=getNextMult();
     const ov=document.createElement('div');ov.classList.add('rebirth-overlay');
     ov.innerHTML=`<h2>🔄 Перерождение</h2>
-        <p class="rb-desc">Ты потеряешь <b>все баллы, уровни и улучшения</b>, но получишь постоянный множитель ко всему!<br><br>Купленные скины, фоны, эффекты и звуки <b>сохранятся</b>.</p>
+        <p class="rb-desc">Ты потеряешь <b>все баллы, уровни и улучшения</b>, но получишь постоянный множитель ко всему!<br><br>Купленные скины, фоны, эффекты, звуки и <b>монеты сохранятся</b>.</p>
         <div class="rb-mult-big">x${nextMult}</div>
         <p class="rb-desc" style="font-size:.8em;opacity:.7">Текущий: x${game.rebirthMult} → Новый: x${nextMult}</p>
         <div class="rb-btns">
@@ -893,6 +825,7 @@ function doRebirth(){
     game.rebirths++;game.rebirthMult=getNextMult();
     game.score=0;game.totalEarned=0;game.totalClicks=0;game.totalUpgradesBought=0;
     game.level=1;game.levelProgress=0;game.clickPower=1;game.perSecond=0;
+    // Монеты НЕ сбрасываются! Улучшения монет тоже не сбрасываются
     upgrades.forEach(u=>u.level=0);
     recalc();spawnConfetti();
     showAch({name:'🔄 Перерождение!',desc:'Множитель: x'+game.rebirthMult});
@@ -905,51 +838,61 @@ function doRebirth(){
 function getCfg(){return fxConfigs[activeFx]||fxConfigs.fx_default}
 
 function mkSparks(el,lx,ly){const cfg=getCfg();for(let i=0;i<cfg.cnt;i++){const s=document.createElement('div');s.classList.add('click-spark');const a=(Math.PI*2/cfg.cnt)*i+(Math.random()-.5)*.5;const d=cfg.dist[0]+Math.random()*cfg.dist[1];s.style.left=lx+'px';s.style.top=ly+'px';s.style.setProperty('--tx',Math.cos(a)*d+'px');s.style.setProperty('--ty',Math.sin(a)*d+'px');s.style.background=cfg.colors[~~(Math.random()*cfg.colors.length)];s.style.width=s.style.height=(cfg.sz[0]+Math.random()*cfg.sz[1])+'px';s.style.boxShadow='0 0 '+(3+Math.random()*4)+'px '+s.style.background;el.appendChild(s);setTimeout(()=>s.remove(),550)}}
-
 function mkFlash(el,lx,ly){const cfg=getCfg();const f=document.createElement('div');f.classList.add('click-flash');f.style.left=lx+'px';f.style.top=ly+'px';f.style.background='radial-gradient(circle,'+cfg.flash+' 0%,transparent 70%)';el.appendChild(f);setTimeout(()=>f.remove(),400)}
-
-function mkRing(el,lx,ly){const cfg=getCfg();const r=document.createElement('div');r.classList.add('click-ring');r.style.left=lx+'px';r.style.top=ly+'px';r.style.borderColor=cfg.ring;el.appendChild(r);setTimeout(()=>r.remove(),650);
-if(['fx_rainbow','fx_fire','fx_electric','fx_cosmic'].includes(activeFx)){const r2=document.createElement('div');r2.classList.add('ring2');r2.style.left=lx+'px';r2.style.top=ly+'px';r2.style.border='2px solid '+cfg.ring;el.appendChild(r2);setTimeout(()=>r2.remove(),800)}}
-
+function mkRing(el,lx,ly){const cfg=getCfg();const r=document.createElement('div');r.classList.add('click-ring');r.style.left=lx+'px';r.style.top=ly+'px';r.style.borderColor=cfg.ring;el.appendChild(r);setTimeout(()=>r.remove(),650);if(['fx_rainbow','fx_fire','fx_electric','fx_cosmic'].includes(activeFx)){const r2=document.createElement('div');r2.classList.add('ring2');r2.style.left=lx+'px';r2.style.top=ly+'px';r2.style.border='2px solid '+cfg.ring;el.appendChild(r2);setTimeout(()=>r2.remove(),800)}}
 function mkExtras(el,lx,ly){
     if(activeFx==='fx_fire'){for(let i=0;i<8;i++){const e=document.createElement('div');e.classList.add('fire-ember');e.style.left=(lx+((Math.random()-.5)*40))+'px';e.style.top=ly+'px';e.style.setProperty('--ex',((Math.random()-.5)*30)+'px');e.style.background=['#e74c3c','#f39c12','#f1c40f','#ff6348'][~~(Math.random()*4)];e.style.width=e.style.height=(2+Math.random()*4)+'px';e.style.boxShadow='0 0 6px '+e.style.background;el.appendChild(e);setTimeout(()=>e.remove(),1000)}}
     if(activeFx==='fx_electric'){for(let i=0;i<5;i++){const l=document.createElement('div');l.classList.add('lightning-line');const angle=Math.random()*360;const len=20+Math.random()*40;l.style.left=lx+'px';l.style.top=ly+'px';l.style.height=len+'px';l.style.transform=`rotate(${angle}deg)`;l.style.background='linear-gradient(180deg,rgba(0,210,255,.9),rgba(67,233,123,.5),transparent)';l.style.boxShadow='0 0 4px rgba(0,210,255,.8)';el.appendChild(l);setTimeout(()=>l.remove(),300)}}
     if(activeFx==='fx_cosmic'){for(let i=0;i<10;i++){const st=document.createElement('div');st.classList.add('star-particle');const a=(Math.PI*2/10)*i;const d=40+Math.random()*70;st.style.left=lx+'px';st.style.top=ly+'px';st.style.setProperty('--tx',Math.cos(a)*d+'px');st.style.setProperty('--ty',Math.sin(a)*d+'px');st.style.fontSize=(8+Math.random()*10)+'px';st.textContent=['✦','✧','⭐','💫','·','✨'][~~(Math.random()*6)];el.appendChild(st);setTimeout(()=>st.remove(),1200)}}
 }
-
 function mkGlobal(cx,cy){const cfg=getCfg();const rp=document.createElement('div');rp.classList.add('g-ripple');rp.style.left=cx+'px';rp.style.top=cy+'px';rp.style.background='radial-gradient(circle,'+cfg.flash+' 0%,transparent 70%)';document.body.appendChild(rp);setTimeout(()=>rp.remove(),450);const gc=Math.min(6,Math.floor(cfg.cnt/3));for(let i=0;i<gc;i++){const s=document.createElement('div');s.classList.add('g-spark');const a=(Math.PI*2/gc)*i+Math.random()*.5;const d=14+Math.random()*20;s.style.left=cx+'px';s.style.top=cy+'px';s.style.setProperty('--tx',Math.cos(a)*d+'px');s.style.setProperty('--ty',Math.sin(a)*d+'px');s.style.background=cfg.colors[~~(Math.random()*cfg.colors.length)];document.body.appendChild(s);setTimeout(()=>s.remove(),450)}}
 
 // =============================================
 // КЛИК
 // =============================================
 const scoreEl=document.getElementById('score');
+const currencyAmountEl=document.getElementById('currencyAmount');
+
 clickBtn.addEventListener('mousedown',e=>{e.preventDefault();doClick(e.clientX,e.clientY)});
 clickBtn.addEventListener('touchstart',e=>{e.preventDefault();doClick(e.touches[0].clientX,e.touches[0].clientY)},{passive:false});
 
 function doClick(cx,cy){
     game.score+=game.clickPower;game.totalEarned+=game.clickPower;game.totalClicks++;game.levelProgress+=game.clickPower;
+    // Монеты
+    game.currency+=game.currencyPerClick;game.totalCurrency+=game.currencyPerClick;
     scoreEl.classList.add('bump');setTimeout(()=>scoreEl.classList.remove('bump'),100);
+    currencyAmountEl.classList.add('bump');setTimeout(()=>currencyAmountEl.classList.remove('bump'),100);
     const r=clickBtn.getBoundingClientRect();const lx=cx-r.left,ly=cy-r.top;
-    mkFloat(lx,ly);mkRing(clickBtn,lx,ly);mkFlash(clickBtn,lx,ly);mkSparks(clickBtn,lx,ly);mkExtras(clickBtn,lx,ly);mkGlobal(cx,cy);
-    playClickSound();
-    updateUI();checkLvl();checkAch();
+    mkFloat(lx,ly);mkFloatCurrency(lx,ly);mkRing(clickBtn,lx,ly);mkFlash(clickBtn,lx,ly);mkSparks(clickBtn,lx,ly);mkExtras(clickBtn,lx,ly);mkGlobal(cx,cy);
+    playClickSound();updateUI();checkLvl();checkAch();
 }
 
 function mkFloat(lx,ly){const cfg=getCfg();const n=document.createElement('div');n.classList.add('float-number');n.textContent='+'+fmt(game.clickPower);n.style.color=cfg.flt;n.style.textShadow='0 0 8px '+cfg.flt;n.style.left=lx+'px';n.style.top=ly+'px';n.style.marginLeft=((Math.random()-.5)*26)+'px';clickBtn.appendChild(n);setTimeout(()=>n.remove(),900)}
 
-function buyUp(i){const u=upgrades[i];const cost=getCost(u,game.buyAmount);if(game.score>=cost){game.score-=cost;u.level+=game.buyAmount;game.totalUpgradesBought+=game.buyAmount;recalc();playBuySound();renderUp();updateUI();checkAch()}}
-
-function checkLvl(){
-    let need=lvlReq(game.level);let lvled=false;
-    while(game.levelProgress>=need){game.levelProgress-=need;game.level++;need=lvlReq(game.level);lvled=true}
-    if(lvled)playLevelSound();
+function mkFloatCurrency(lx,ly){
+    const n=document.createElement('div');n.classList.add('float-currency');
+    n.innerHTML=`+${fmt(game.currencyPerClick)}<img src="Currency.png" onerror="this.style.display='none'">`;
+    n.style.left=(lx+20+(Math.random()-.5)*20)+'px';n.style.top=(ly-10)+'px';
+    clickBtn.appendChild(n);setTimeout(()=>n.remove(),900);
 }
+
+// =============================================
+// УЛУЧШЕНИЯ — БАЛЛЫ + УЛУЧШЕНИЯ ВАЛЮТЫ
+// =============================================
+function buyUp(i){const u=upgrades[i];const cost=getCost(u,game.buyAmount);if(game.score>=cost){game.score-=cost;u.level+=game.buyAmount;game.totalUpgradesBought+=game.buyAmount;recalc();playBuySound();renderUp();updateUI();checkAch()}}
+function buyCUp(i){const u=currencyUpgrades[i];const cost=getCost(u,game.buyAmount);if(game.currency>=cost){game.currency-=cost;u.level+=game.buyAmount;recalc();playBuySound();renderUp();updateUI();checkAch()}}
+
+function checkLvl(){let need=lvlReq(game.level);let lvled=false;while(game.levelProgress>=need){game.levelProgress-=need;game.level++;need=lvlReq(game.level);lvled=true}if(lvled)playLevelSound()}
 function lvlReq(l){return Math.floor(50*Math.pow(1.5,l-1))}
 function checkAch(){for(const a of achievements){if(!unlockedAch.has(a.id)&&a.check()){unlockedAch.add(a.id);showAch(a)}}}
 function showAch(a){const p=document.createElement('div');p.classList.add('ach-popup');p.innerHTML=`<h3>${a.name}</h3><p>${a.desc}</p>`;document.body.appendChild(p);setTimeout(()=>p.remove(),3100)}
 
 function renderUp(){
     const list=document.getElementById('upgrades-list');list.innerHTML='';
+
+    // Заголовок улучшений баллов
+    const h1=document.createElement('div');h1.style.cssText='font-size:.78em;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:1px;margin:0 0 8px;text-align:center';h1.textContent='📊 Баллы (покупается за баллы)';list.appendChild(h1);
+
     upgrades.forEach((u,i)=>{
         const cost=getCost(u,game.buyAmount);const can=game.score>=cost;
         if(u.level===0&&game.totalEarned<u.baseCost*.4)return;
@@ -957,12 +900,25 @@ function renderUp(){
         c.innerHTML=`<div class="up-icon">${u.icon}</div><div class="up-det"><div class="up-name">${u.name}</div><div class="up-desc">${u.desc}</div><div class="up-lvl">Ур. ${u.level}${game.rebirthMult>1?' <span class="bonus-tag">x'+game.rebirthMult+'</span>':''}</div></div><button class="up-btn" ${can?'':'disabled'} onclick="buyUp(${i})">${fmt(cost)}${game.buyAmount>1?' (x'+game.buyAmount+')':''}</button>`;
         list.appendChild(c);
     });
+
+    // Заголовок улучшений монет
+    const h2=document.createElement('div');h2.style.cssText='font-size:.78em;font-weight:600;color:#b8860b;text-transform:uppercase;letter-spacing:1px;margin:12px 0 8px;text-align:center';
+    h2.innerHTML=`<img src="Currency.png" style="width:14px;height:14px;vertical-align:middle;object-fit:contain" onerror="this.style.display='none'"> Монеты (покупается за монеты)`;
+    list.appendChild(h2);
+
+    currencyUpgrades.forEach((u,i)=>{
+        const cost=getCost(u,game.buyAmount);const can=game.currency>=cost;
+        const c=document.createElement('div');c.className='up-card'+(can?'':' locked');
+        c.style.borderLeftColor='#b8860b';
+        c.innerHTML=`<div class="up-icon">${u.icon}</div><div class="up-det"><div class="up-name">${u.name}</div><div class="up-desc">${u.desc}</div><div class="up-lvl" style="color:#b8860b">Ур. ${u.level}</div></div><button class="up-btn" style="background:#b8860b" ${can?'':'disabled'} onclick="buyCUp(${i})">${curIcon()}${fmt(cost)}${game.buyAmount>1?' (x'+game.buyAmount+')':''}</button>`;
+        list.appendChild(c);
+    });
 }
 
 function updateShopButtons(){
     document.querySelectorAll('.shop-buy:not(.rb-locked)').forEach(btn=>{
         const card=btn.closest('.shop-card');
-        if(card){const cost=parseFloat(card.dataset.cost);if(!isNaN(cost))btn.disabled=game.score<cost}
+        if(card){const cost=parseFloat(card.dataset.cost);if(!isNaN(cost))btn.disabled=game.currency<cost}
     });
 }
 
@@ -972,8 +928,10 @@ function updateUI(){
     document.getElementById('score').textContent=fmt(game.score);
     document.getElementById('ps').textContent=fmt(game.perSecond);
     document.getElementById('clickPower').textContent=fmt(game.clickPower);
+    document.getElementById('clickCurrency').textContent=fmt(game.currencyPerClick);
     document.getElementById('totalClicks').textContent=fmt(game.totalClicks);
     document.getElementById('totalEarned').textContent=fmt(game.totalEarned);
+    document.getElementById('totalCurrency').textContent=fmt(game.totalCurrency);
     document.getElementById('totalUpgrades').textContent=game.totalUpgradesBought;
     document.getElementById('totalRebirths').textContent=game.rebirths;
     document.getElementById('level').textContent=game.level;
@@ -983,46 +941,62 @@ function updateUI(){
     const need=lvlReq(game.level);const pct=Math.min((game.levelProgress/need)*100,100);
     document.getElementById('level-fill').style.width=pct+'%';
     document.getElementById('level-progress-text').textContent=fmt(game.levelProgress)+' / '+fmt(need);
+    // Валюта
+    document.getElementById('currencyAmount').textContent=fmt(game.currency);
+    document.getElementById('currencyRate').textContent=fmt(game.currencyPerSecond);
+    document.getElementById('currencyMult').textContent=game.rebirthMult;
 }
 
-// Авто-доход
-setInterval(()=>{if(game.perSecond>0){game.score+=game.perSecond/20;game.totalEarned+=game.perSecond/20;game.levelProgress+=game.perSecond/20;checkLvl();updateUI()}},50);
+// Авто-доход (баллы + монеты)
+setInterval(()=>{
+    if(game.perSecond>0){game.score+=game.perSecond/20;game.totalEarned+=game.perSecond/20;game.levelProgress+=game.perSecond/20;checkLvl()}
+    if(game.currencyPerSecond>0){game.currency+=game.currencyPerSecond/20;game.totalCurrency+=game.currencyPerSecond/20}
+    updateUI();
+},50);
 
-// Периодическое обновление (не пересоздаёт магазин — видео не сбрасывается)
 setInterval(()=>{renderUp();updateShopButtons();updateUI();checkAch()},500);
 
 // =============================================
 // СОХРАНЕНИЕ / ЗАГРУЗКА
 // =============================================
-function saveGame(){localStorage.setItem('megaClickerSave',JSON.stringify({
-    score:game.score,totalEarned:game.totalEarned,totalClicks:game.totalClicks,
-    totalUpgradesBought:game.totalUpgradesBought,level:game.level,levelProgress:game.levelProgress,
-    startTime:game.startTime,rebirths:game.rebirths,rebirthMult:game.rebirthMult,
-    upgradeLevels:upgrades.map(u=>u.level),achievements:[...unlockedAch],
-    skinOwned:skins.map(s=>s.owned),activeSkin,
-    bgOwned:bgs.map(b=>b.owned),activeBg,
-    fxOwned:fxList.map(f=>f.owned),activeFx,
-    sndOwned:sndList.map(s=>s.owned),activeSound,soundEnabled
-}))}
+function saveGame(){
+    localStorage.setItem('megaClickerSave2',JSON.stringify({
+        score:game.score,totalEarned:game.totalEarned,totalClicks:game.totalClicks,
+        totalUpgradesBought:game.totalUpgradesBought,level:game.level,levelProgress:game.levelProgress,
+        startTime:game.startTime,rebirths:game.rebirths,rebirthMult:game.rebirthMult,
+        currency:game.currency,totalCurrency:game.totalCurrency,
+        upgradeLevels:upgrades.map(u=>u.level),
+        currencyUpgradeLevels:currencyUpgrades.map(u=>u.level),
+        achievements:[...unlockedAch],
+        skinOwned:skins.map(s=>s.owned),activeSkin,
+        bgOwned:bgs.map(b=>b.owned),activeBg,
+        fxOwned:fxList.map(f=>f.owned),activeFx,
+        sndOwned:sndList.map(s=>s.owned),activeSound,soundEnabled
+    }));
+}
 
 function loadGame(){
-    const raw=localStorage.getItem('megaClickerSave');if(!raw)return;
-    try{const d=JSON.parse(raw);
-    game.score=d.score||0;game.totalEarned=d.totalEarned||0;game.totalClicks=d.totalClicks||0;
-    game.totalUpgradesBought=d.totalUpgradesBought||0;game.level=d.level||1;game.levelProgress=d.levelProgress||0;
-    game.startTime=d.startTime||Date.now();game.rebirths=d.rebirths||0;game.rebirthMult=d.rebirthMult||1;
-    if(d.upgradeLevels)d.upgradeLevels.forEach((l,i)=>{if(upgrades[i])upgrades[i].level=l});
-    if(d.achievements)unlockedAch=new Set(d.achievements);
-    if(d.skinOwned)d.skinOwned.forEach((o,i)=>{if(skins[i])skins[i].owned=o});
-    if(d.activeSkin){activeSkin=d.activeSkin;const sk=skins.find(s=>s.id===activeSkin);if(sk&&sk.owned)clickBtnImg.src=sk.img}
-    if(d.bgOwned)d.bgOwned.forEach((o,i)=>{if(bgs[i])bgs[i].owned=o});
-    if(d.activeBg)activeBg=d.activeBg;
-    if(d.fxOwned)d.fxOwned.forEach((o,i)=>{if(fxList[i])fxList[i].owned=o});
-    if(d.activeFx)activeFx=d.activeFx;
-    if(d.sndOwned)d.sndOwned.forEach((o,i)=>{if(sndList[i])sndList[i].owned=o});
-    if(d.activeSound)activeSound=d.activeSound;
-    if(d.soundEnabled!==undefined)soundEnabled=d.soundEnabled;
-    recalc();applyBg();
+    const raw=localStorage.getItem('megaClickerSave2');
+    if(!raw)return;
+    try{
+        const d=JSON.parse(raw);
+        game.score=d.score||0;game.totalEarned=d.totalEarned||0;game.totalClicks=d.totalClicks||0;
+        game.totalUpgradesBought=d.totalUpgradesBought||0;game.level=d.level||1;game.levelProgress=d.levelProgress||0;
+        game.startTime=d.startTime||Date.now();game.rebirths=d.rebirths||0;game.rebirthMult=d.rebirthMult||1;
+        game.currency=d.currency||0;game.totalCurrency=d.totalCurrency||0;
+        if(d.upgradeLevels)d.upgradeLevels.forEach((l,i)=>{if(upgrades[i])upgrades[i].level=l});
+        if(d.currencyUpgradeLevels)d.currencyUpgradeLevels.forEach((l,i)=>{if(currencyUpgrades[i])currencyUpgrades[i].level=l});
+        if(d.achievements)unlockedAch=new Set(d.achievements);
+        if(d.skinOwned)d.skinOwned.forEach((o,i)=>{if(skins[i])skins[i].owned=o});
+        if(d.activeSkin){activeSkin=d.activeSkin;const sk=skins.find(s=>s.id===activeSkin);if(sk&&sk.owned)clickBtnImg.src=sk.img}
+        if(d.bgOwned)d.bgOwned.forEach((o,i)=>{if(bgs[i])bgs[i].owned=o});
+        if(d.activeBg)activeBg=d.activeBg;
+        if(d.fxOwned)d.fxOwned.forEach((o,i)=>{if(fxList[i])fxList[i].owned=o});
+        if(d.activeFx)activeFx=d.activeFx;
+        if(d.sndOwned)d.sndOwned.forEach((o,i)=>{if(sndList[i])sndList[i].owned=o});
+        if(d.activeSound)activeSound=d.activeSound;
+        if(d.soundEnabled!==undefined)soundEnabled=d.soundEnabled;
+        recalc();applyBg();
     }catch(e){}
 }
 
@@ -1030,7 +1004,7 @@ setInterval(saveGame,5000);
 window.addEventListener('beforeunload',saveGame);
 
 // =============================================
-// ЗВЁЗДЫ (космос-фон)
+// ЗВЁЗДЫ
 // =============================================
 function createStars(){const c=document.getElementById('starsOverlay');for(let i=0;i<80;i++){const s=document.createElement('div');s.classList.add('star');s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';const sz=1+Math.random()*3;s.style.width=sz+'px';s.style.height=sz+'px';s.style.animationDuration=(1+Math.random()*3)+'s';s.style.animationDelay=Math.random()*3+'s';c.appendChild(s)}}
 createStars();
