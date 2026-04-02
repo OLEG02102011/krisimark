@@ -748,7 +748,7 @@ clickBtnWrap.addEventListener('mouseleave', () => {
 
 // --- ИСПРАВЛЕНИЕ: Убираем инкремент mainVideoSession ---
 clickBtnVideo.addEventListener('ended', () => {
- /*mainVideoSession++;*/ // Это больше не нужно
+ mainVideoSession++; // Это больше не нужно
  clickBtnVideo.style.opacity = '0';
  clickBtnImg.style.opacity = '1'
 });
@@ -924,7 +924,51 @@ function updateShopButtons(){
     });
 }
 
+
+
 function renderAll(){renderSkins();renderBgs();renderFxs();renderSnds();renderUp()}
+
+function renderSkins(){
+  const list=document.getElementById('skins-list');list.innerHTML='';
+  skins.forEach((item,i)=>{
+    const isActive=activeSkin===item.id;
+    const can=!item.owned&&game.currency>=item.cost;
+    const rbLocked=item.reqRebirth>game.rebirths;
+    const c=document.createElement('div');
+    c.className='shop-card'+(isActive?' s-active':'')+(!item.owned?' s-locked':'');
+    c.dataset.cost=item.cost;
+    // ИСПРАВЛЕНО: добавлены обратные кавычки
+    let bonusHTML=getBonusText(item)?`<div class="shop-bonus">🎁 ${getBonusText(item)}</div>`:'';
+    let action='';
+    if(isActive)action='<span class="shop-badge equipped">✓</span>';
+    else if(item.owned)action='<span class="shop-badge owned" data-equip="1">Надеть</span>';
+    // ИСПРАВЛЕНО: добавлены обратные кавычки
+    else if(rbLocked)action=`<button class="shop-buy rb-locked" disabled>🔒 ${item.reqRebirth} перерожд.</button>`;
+    // ИСПРАВЛЕНО: добавлены обратные кавычки
+    else action=`<button class="shop-buy" data-buy="1" ${can?'':'disabled'}>${curIcon()} ${fmt(item.cost)}</button>`;
+    c.innerHTML=`<div class="shop-preview"><img src="${item.img}" onerror="this.src='image.png'"></div>
+      <div class="shop-info"><div class="shop-name">${item.name}</div><div class="shop-desc">${item.desc}</div>${bonusHTML}</div>${action}`;
+    const buyBtn=c.querySelector('[data-buy]');
+    if(buyBtn)buyBtn.addEventListener('click',()=>buySkin(i));
+    const equipBtn=c.querySelector('[data-equip]');
+    if(equipBtn)equipBtn.addEventListener('click',()=>equipSkin(item.id));
+    // Видео hover
+    if(item.video){
+      const preview=c.querySelector('.shop-preview');
+      const img=preview.querySelector('img');
+      let vid=null,session=0;
+      c.addEventListener('mouseenter',()=>{
+        const s=++session;
+        if(!vid){vid=document.createElement('video');vid.muted=true;vid.playsInline=true;vid.className='preview-video';vid.src=item.video;vid.preload='auto';vid.addEventListener('ended',()=>{session++;vid.style.opacity='0';img.style.opacity='1'});preview.appendChild(vid)}
+        vid.currentTime=0;
+        const p=vid.play();
+        if(p)p.then(()=>{if(session===s){vid.style.opacity='1';img.style.opacity='0'}else{try{vid.pause();vid.currentTime=0}catch(e){}}}).catch(()=>{});
+      });
+      c.addEventListener('mouseleave',()=>{session++;if(vid){vid.style.opacity='0';const v=vid;setTimeout(()=>{try{v.pause();v.currentTime=0}catch(e){}},400)}img.style.opacity='1'});
+    }
+    list.appendChild(c);
+  });
+}
 
 function updateUI(){
     document.getElementById('score').textContent=fmt(game.score);
@@ -949,7 +993,6 @@ function updateUI(){
     document.getElementById('currencyMult').textContent=game.rebirthMult;
 }
 
-// Авто-доход (баллы + монеты)
 setInterval(()=>{
     if(game.perSecond>0){game.score+=game.perSecond/20;game.totalEarned+=game.perSecond/20;game.levelProgress+=game.perSecond/20;checkLvl()}
     if(game.currencyPerSecond>0){game.currency+=game.currencyPerSecond/20;game.totalCurrency+=game.currencyPerSecond/20}
