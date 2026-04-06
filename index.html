@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Решу ВПР</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
+    <title id="dynamicTitle">ВПР−2026, Информатика для ? класса: задания, ответы, решения</title>
+    <link rel="icon" href="logo.png" type="image/png">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
         *{margin:0;padding:0;box-sizing:border-box}
@@ -270,8 +270,8 @@
         .shop-badge.owned{background:#e8f5e9;color:#2e7d32;cursor:pointer;border:1px solid #c8e6c9;transition:all .15s}
         .shop-badge.owned:hover{background:#c8e6c9}
         .shop-buy{background:#090949;border:none;color:#fff;padding:6px 11px;border-radius:5px;cursor:pointer;font-weight:600;font-size:.75em;white-space:nowrap;transition:all .15s;font-family:inherit;flex-shrink:0;display:flex;align-items:center;gap:4px}
-        .shop-buy:hover:not(:disabled){background:#0d0d5e;transform:translateY(-1px)}
-        .shop-buy:active:not(:disabled){transform:scale(.96)}
+        .shop-buy:hover:not(:disabled) { background: #0d0d5e; filter: brightness(1.2); }
+        .shop-buy:active:not(:disabled) { filter: brightness(0.9); }
         .shop-buy:disabled{background:#ccc;cursor:not-allowed}
         .shop-buy.rb-locked{background:#9b59b6;opacity:.7}
         .shop-buy .cur-icon{width:13px;height:13px;object-fit:contain}
@@ -285,19 +285,75 @@
         .buy-toggle{display:flex;justify-content:center;gap:4px;margin-bottom:12px}
         .buy-toggle button{background:#f5f5f5;border:1px solid #e0e0e0;color:#777;padding:3px 12px;border-radius:4px;cursor:pointer;font-size:.78em;transition:all .15s;font-family:inherit}
         .buy-toggle button.active{background:#eef2ff;border-color:#090949;color:#090949;font-weight:600}
-        .up-card{background:#fafafa;border:1px solid #eee;border-radius:7px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;transition:all .15s}
-        .up-card:hover{border-color:#090949;background:#f5f7ff}
-        .up-card.locked{opacity:.4}
+        .up-card {
+            display: flex; align-items: center; background: #fff; padding: 10px;
+            border-radius: 10px; margin-bottom: 8px; border-left: 4px solid #090949;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: opacity 0.3s, filter 0.3s, transform 0.2s;
+            opacity: 1;
+            filter: none;
+        }        
+        .up-card:hover {
+            background: #fdfdfd;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .up-card.locked {
+            opacity: 0.4;
+            filter: grayscale(0.8);
+            pointer-events: none;
+        }
+        .up-card:not(.locked):hover {
+            background: #fdfdfd;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateX(4px); /* Легкий сдвиг вправо вместо прыжка вверх */
+        }
         .up-icon{font-size:1.8em;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:8px;border:1px solid #eee;flex-shrink:0}
         .up-det{flex:1;min-width:0}
         .up-name{font-weight:600;font-size:.88em;color:#090949;margin-bottom:1px}
         .up-desc{font-size:.72em;color:#aaa;margin-bottom:2px}
         .up-lvl{font-size:.68em;color:#3b7bbf;font-weight:500}
         .up-btn{background:#090949;border:none;color:#fff;padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:600;font-size:.78em;white-space:nowrap;transition:all .15s;font-family:inherit;flex-shrink:0;display:flex;align-items:center;gap:4px}
-        .up-btn:hover:not(:disabled){background:#0d0d5e;transform:translateY(-1px)}
-        .up-btn:active:not(:disabled){transform:scale(.96)}
-        .up-btn:disabled{background:#ccc;cursor:not-allowed}
+        .up-btn:hover:not(:disabled) {
+            background: #0d0d5e;
+            filter: brightness(1.2);
+        }
+        .up-btn:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+        .up-btn:disabled {
+            background: #555 !important;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
         .up-btn .cur-icon{width:13px;height:13px;object-fit:contain}
+
+        .boss-start-btn {
+            background: linear-gradient(45deg, #e74c3c, #c0392b); border: 2px solid #ffb8b8; color: #fff;
+            padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 0.9em; font-weight: 700;
+            transition: all .2s; font-family: inherit; display: flex; align-items: center; gap: 8px;
+            margin: 14px auto; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4); animation: pulseBtn 2s infinite;
+        }
+        .boss-start-btn:hover { filter: brightness(1.2); box-shadow: 0 6px 20px rgba(231, 76, 60, 0.6); }
+        @keyframes pulseBtn { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+        .boss-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 0, 0, 0.95); z-index: 20000; display: none;
+            flex-direction: column; align-items: center; justify-content: center; color: #fff;
+        }
+        .boss-title { font-size: 2.5em; color: #e74c3c; text-shadow: 0 0 20px #e74c3c; margin-bottom: 10px; text-transform: uppercase; }
+        .boss-timer { font-size: 2em; font-weight: bold; color: #f1c40f; margin-bottom: 20px; }
+        .boss-hp-bar { width: 80%; max-width: 600px; height: 30px; background: #333; border: 3px solid #555; border-radius: 15px; overflow: hidden; margin-bottom: 30px; position: relative; }
+        .boss-hp-fill { height: 100%; background: linear-gradient(90deg, #ff0000, #ff4d4d); width: 100%; transition: width 0.1s linear; }
+        .boss-arena {
+            position: relative; width: 300px; height: 300px; border-radius: 50%;
+            border: 5px solid #e74c3c; overflow: hidden; cursor: crosshair;
+            box-shadow: 0 0 50px rgba(231, 76, 60, 0.5); user-select: none;
+        }
+        .boss-arena:active { transform: scale(0.95); }
+        .boss-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        .boss-instructions { margin-top: 20px; font-size: 1.2em; color: #ccc; text-align: center; }
+        .boss-danger { color: #e74c3c; font-weight: bold; font-size: 0.8em; margin-top: 5px; }
 
         .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:14px}
         .st-card{background:#fff;border:1px solid #e8e8e8;border-radius:7px;padding:12px;text-align:center;transition:all .3s}
@@ -358,8 +414,7 @@
 
 <div class="header-wrap"><div class="header-inner">
     <div class="header-logo" onclick="return false">
-        <img src="/static/media/websiteLogo.2c1108a8.svg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
-        <span class="header-logo-fallback" style="display:none">СДАМ <span class="blue">ГИА:</span> РЕШУ ВПР<span class="sub">Информатика 7</span></span>
+        <img src="logo.png" class="logo-img" alt="logo" style="width: 40px; height: auto; vertical-align: middle;">
     </div>
     <div class="header-nav">
         <a href="#" onclick="return false">Каталог заданий</a>
@@ -368,13 +423,16 @@
         <a href="#" onclick="return false">Об экзамене</a>
     </div>
 </div></div>
-<div class="subheader"><div class="subheader-inner">
-    <a href="#" onclick="return false" class="active">Информатика 7</a>
-    <a href="#" onclick="return false">Задания</a>
-    <a href="#" onclick="return false">Варианты</a>
-    <a href="#" onclick="return false">Теория</a>
-</div></div>
-
+<div class="subheader">
+    <div class="subheader-inner">
+        <a href="#" onclick="return false" class="active">
+            Информатика <span id="grade-subheader-display">7</span>
+        </a>
+        <a href="#" onclick="return false">Задания</a>
+        <a href="#" onclick="return false">Варианты</a>
+        <a href="#" onclick="return false">Теория</a>
+    </div>
+</div>
 <div class="school-warning" id="schoolWarning">
     <span class="w-icon">⚠️</span>
     <div class="w-text"><b>Будь аккуратен!</b> Нажми <span class="w-key">G</span> — мгновенный переход на настоящий сайт ВПР.</div>
@@ -390,7 +448,8 @@
     <div class="breadcrumb">
         <a href="#" onclick="return false">Главная</a><span class="sep">›</span>
         <a href="#" onclick="return false">ВПР</a><span class="sep">›</span>
-        <a href="#" onclick="return false">Информатика 7</a><span class="sep">›</span>Тренажёр
+        <a href="#" onclick="return false">Информатика <span id="grade-breadcrumb">7</span></a><span class="sep">›</span>
+        <span class="active-page">Тренажёр</span>
     </div>
     <div class="card">
         <div class="level-info"><span>Уровень <span class="lvl" id="level">1</span></span><span id="level-progress-text">0 / 50</span></div>
@@ -465,9 +524,27 @@
         <div class="st-card"><div class="st-num" id="totalRebirths">0</div><div class="st-label">Перерождений</div></div>
     </div>
     <button class="rebirth-btn" onclick="showRebirthConfirm()">🔄 Перерождение <span class="bonus-tag">x<span id="nextMultPreview">1.5</span></span></button>
+    <button class="boss-start-btn" onclick="startBossFight()">⚔️ ВЫЗВАТЬ БОССА</button>
 </div>
-<div class="site-footer">© 2024 Сдам ГИА: Решу ВПР</div>
-
+<footer style="text-align: center; padding: 20px; color: #666; font-size: 14px;">
+    © <span id="copyright-year">2024</span> Сдам ГИА: Решу ВПР
+</footer>
+<div class="boss-overlay" id="bossOverlay">
+    <h1 class="boss-title">ЭПИЧЕСКИЙ БОСС</h1>
+    <div class="boss-timer" id="bossTimer">15.0</div>
+    <div class="boss-hp-bar"><div class="boss-hp-fill" id="bossHpFill"></div></div>
+    
+    <div class="boss-arena" id="bossArena">
+        <img src="boss_image.png" class="boss-video" alt="Boss">
+        <video id="bossIdleVideo" class="boss-video" src="boss_video_not_damaged.mp4" autoplay loop muted playsinline></video>
+        <video id="bossDamageVideo" class="boss-video" src="boss_video_damaged.mp4" muted playsinline style="opacity:0; z-index: 2;"></video>
+    </div>
+    
+    <div class="boss-instructions">
+        КЛИКАЙ КАК МОЖНО БЫСТРЕЕ!<br>
+        <span class="boss-danger">Если не успеешь — потеряешь ВСЁ!</span>
+    </div>
+</div>
 <script>
 // =============================================
 // ПАНИКА / УЧИТЕЛЬ
@@ -881,7 +958,18 @@ function mkFloatCurrency(lx,ly){
 // =============================================
 // УЛУЧШЕНИЯ — БАЛЛЫ + УЛУЧШЕНИЯ ВАЛЮТЫ
 // =============================================
-function buyUp(i){const u=upgrades[i];const cost=getCost(u,game.buyAmount);if(game.score>=cost){game.score-=cost;u.level+=game.buyAmount;game.totalUpgradesBought+=game.buyAmount;recalc();playBuySound();renderUp();updateUI();checkAch()}}
+function buyUp(i) {
+    const u = upgrades[i];
+    const cost = getCost(u, game.buyAmount);
+    if (game.score >= cost) {
+        game.score -= cost;
+        u.level += game.buyAmount;
+        recalc();
+        renderUp();
+        updateUI();
+        saveGame();
+    }
+}
 function buyCUp(i){const u=currencyUpgrades[i];const cost=getCost(u,game.buyAmount);if(game.currency>=cost){game.currency-=cost;u.level+=game.buyAmount;recalc();playBuySound();renderUp();updateUI();checkAch()}}
 
 function checkLvl(){let need=lvlReq(game.level);let lvled=false;while(game.levelProgress>=need){game.levelProgress-=need;game.level++;need=lvlReq(game.level);lvled=true}if(lvled)playLevelSound()}
@@ -890,7 +978,9 @@ function checkAch(){for(const a of achievements){if(!unlockedAch.has(a.id)&&a.ch
 function showAch(a){const p=document.createElement('div');p.classList.add('ach-popup');p.innerHTML=`<h3>${a.name}</h3><p>${a.desc}</p>`;document.body.appendChild(p);setTimeout(()=>p.remove(),3100)}
 
 function renderUp(){
-    const list=document.getElementById('upgrades-list');list.innerHTML='';
+    const list = document.getElementById('upgrades-list');
+    if (!list) return;
+    list.innerHTML = '';
 
     // Заголовок улучшений баллов
     const h1=document.createElement('div');h1.style.cssText='font-size:.78em;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:1px;margin:0 0 8px;text-align:center';h1.textContent='📊 Баллы (покупается за баллы)';list.appendChild(h1);
@@ -914,6 +1004,53 @@ function renderUp(){
         c.style.borderLeftColor='#b8860b';
         c.innerHTML=`<div class="up-icon">${u.icon}</div><div class="up-det"><div class="up-name">${u.name}</div><div class="up-desc">${u.desc}</div><div class="up-lvl" style="color:#b8860b">Ур. ${u.level}</div></div><button class="up-btn" style="background:#b8860b" ${can?'':'disabled'} onclick="buyCUp(${i})">${curIcon()}${fmt(cost)}${game.buyAmount>1?' (x'+game.buyAmount+')':''}</button>`;
         list.appendChild(c);
+    });
+    lastScoreForRender = game.score;
+}
+
+function softUpdateUpgrades() {
+    const cards = document.querySelectorAll('.up-card');
+    const buttons = document.querySelectorAll('.up-btn');
+    if (cards.length === 0) return;
+
+    let idx = 0;
+
+    // Сначала проверяем апгрейды за баллы
+    upgrades.forEach((u) => {
+        if (u.level === 0 && game.totalEarned < u.baseCost * 0.4) return; // Пропускаем скрытые
+        
+        const cost = getCost(u, game.buyAmount);
+        const canAfford = game.score >= cost;
+        
+        if (cards[idx]) {
+            // Если денег хватает — убираем прозрачность (класс locked)
+            if (canAfford) cards[idx].classList.remove('locked');
+            else cards[idx].classList.add('locked');
+            
+            // Обновляем текст кнопки и её доступность
+            if (buttons[idx]) {
+                buttons[idx].disabled = !canAfford;
+                buttons[idx].textContent = fmt(cost) + (game.buyAmount > 1 ? ' (x' + game.buyAmount + ')' : '');
+            }
+        }
+        idx++;
+    });
+
+    // Затем проверяем апгрейды за монеты
+    currencyUpgrades.forEach((u) => {
+        const cost = getCost(u, game.buyAmount);
+        const canAfford = game.currency >= cost;
+
+        if (cards[idx]) {
+            if (canAfford) cards[idx].classList.remove('locked');
+            else cards[idx].classList.add('locked');
+
+            if (buttons[idx]) {
+                buttons[idx].disabled = !canAfford;
+                buttons[idx].innerHTML = `<img src="Currency.png" class="cur-icon" onerror="this.style.display='none'">` + fmt(cost);
+            }
+        }
+        idx++;
     });
 }
 
@@ -993,13 +1130,15 @@ function updateUI(){
     document.getElementById('currencyMult').textContent=game.rebirthMult;
 }
 
-setInterval(()=>{
-    if(game.perSecond>0){game.score+=game.perSecond/20;game.totalEarned+=game.perSecond/20;game.levelProgress+=game.perSecond/20;checkLvl()}
-    if(game.currencyPerSecond>0){game.currency+=game.currencyPerSecond/20;game.totalCurrency+=game.currencyPerSecond/20}
+setInterval(() => {
+    softUpdateUpgrades();
+    
+    updateShopButtons();
     updateUI();
-},50);
+    checkAch();
+}, 500);
 
-setInterval(()=>{renderUp();updateShopButtons();updateUI();checkAch()},500);
+renderUp();
 
 // =============================================
 // СОХРАНЕНИЕ / ЗАГРУЗКА
@@ -1055,6 +1194,101 @@ function createStars(){const c=document.getElementById('starsOverlay');for(let i
 createStars();
 
 // =============================================
+// ЭПИЧЕСКИЙ БОСС
+// =============================================
+let bossActive = false;
+let bossHp = 0;
+let bossMaxHp = 0;
+let bossTime = 0;
+let bossInterval;
+
+function startBossFight() {
+    // Проверка, чтобы игрок не пришел к боссу совсем пустым
+    if (game.clickPower < 10 && game.score < 1000) {
+        alert('Ты слишком слаб для этого сражения! Прокачайся немного.');
+        return;
+    }
+
+    bossActive = true;
+    // Здоровье босса масштабируется от твоей силы клика (около 150 кликов за 15 секунд)
+    bossMaxHp = Math.max(5000, game.clickPower * 150 * game.rebirthMult); 
+    bossHp = bossMaxHp;
+    bossTime = 15.0; // 15 секунд на уничтожение
+
+    document.getElementById('bossOverlay').style.display = 'flex';
+    document.getElementById('bossHpFill').style.width = '100%';
+    document.getElementById('bossIdleVideo').play().catch(()=>{});
+
+    // Запускаем таймер
+    bossInterval = setInterval(() => {
+        bossTime -= 0.1;
+        if (bossTime <= 0) {
+            endBossFight(false); // Время вышло - поражение
+        } else {
+            document.getElementById('bossTimer').textContent = bossTime.toFixed(1);
+        }
+    }, 100);
+}
+
+const bossArena = document.getElementById('bossArena');
+const bossDamageVideo = document.getElementById('bossDamageVideo');
+
+bossArena.addEventListener('mousedown', hitBoss);
+bossArena.addEventListener('touchstart', (e) => { e.preventDefault(); hitBoss(e); }, {passive: false});
+
+function hitBoss(e) {
+    if (!bossActive) return;
+    
+    bossHp -= game.clickPower;
+    
+    // Эффект визуального урона (показываем видео с уроном)
+    bossDamageVideo.style.opacity = '1';
+    bossDamageVideo.currentTime = 0;
+    bossDamageVideo.play().catch(()=>{});
+    
+    // Прячем видео урона через короткое время
+    setTimeout(() => { if (bossActive) bossDamageVideo.style.opacity = '0'; }, 250);
+
+    // Добавляем искры (используем уже готовую функцию глобальных искр)
+    let cx = e.clientX || (e.touches && e.touches[0].clientX) || window.innerWidth/2;
+    let cy = e.clientY || (e.touches && e.touches[0].clientY) || window.innerHeight/2;
+    mkGlobal(cx, cy); 
+    playClickSound();
+
+    // Обновляем полосу здоровья
+    const pct = Math.max(0, (bossHp / bossMaxHp) * 100);
+    document.getElementById('bossHpFill').style.width = pct + '%';
+
+    if (bossHp <= 0) {
+        endBossFight(true); // Босс повержен - победа
+    }
+}
+
+function endBossFight(isWin) {
+    bossActive = false;
+    clearInterval(bossInterval);
+    document.getElementById('bossOverlay').style.display = 'none';
+    bossDamageVideo.style.opacity = '0';
+
+    if (isWin) {
+        // Награда за победу
+        game.score += 1000000;
+        game.totalEarned += 1000000;
+        game.currency += 100000;
+        game.totalCurrency += 100000;
+        alert("🎉 ПОБЕДА! Эпический босс повержен!\nНаграда:\n+ 1 000 000 баллов\n+ 100 000 монет");
+    } else {
+        // Штраф за поражение
+        game.score = 0;
+        game.currency = 0;
+        alert("💀 ПОРАЖЕНИЕ! Босс уничтожил тебя.\nВсе твои текущие баллы и монеты потеряны!");
+    }
+    
+    updateUI();
+    saveGame();
+}
+
+// =============================================
 // ИНИЦИАЛИЗАЦИЯ
 // =============================================
 loadGame();
@@ -1064,6 +1298,47 @@ updateMainButtonVideo();
 updateSoundToggleUI();
 renderAll();
 updateUI();
+
+function updateDynamicContent() {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth(); // 0 - Январь, 8 - Сентябрь
+
+    // Логика: 1 класс в 2019 году
+    const startYear = 2019;
+    let grade = currentYear - startYear + 1;
+
+    // Если сейчас еще не наступило 1 сентября, класс считается предыдущим
+    if (currentMonth < 8) {
+        grade -= 1;
+    }
+
+    // Цикл 1-11: если больше 11, сбрасывается до 1
+    let finalGrade = ((grade - 1) % 11) + 1;
+    if (finalGrade <= 0) finalGrade = 1;
+
+    // 1. Обновляем Title вкладки браузера
+    // Используем &nbsp; через символ \u00A0 для корректного отображения в JS
+    document.title = `ВПР−${currentYear}, Информатика для ${finalGrade} класса: задания, ответы, решения`;
+
+    // 2. Обновляем год в копирайте
+    const cpYear = document.getElementById('copyright-year');
+    if (cpYear) cpYear.innerText = currentYear;
+
+    // 3. Обновляем класс во всех элементах на странице
+    const gradeElements = ['grade-breadcrumb', 'grade-subheader-display', 'grade-main-display'];
+    gradeElements.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = finalGrade;
+    });
+
+    // 4. Обновляем текущий год в заголовках (если есть id="current-year-display")
+    const yearDisplay = document.getElementById('current-year-display');
+    if (yearDisplay) yearDisplay.innerText = currentYear;
+}
+
+// Запускаем при загрузке
+document.addEventListener('DOMContentLoaded', updateDynamicContent);
 </script>
 </body>
 </html>
