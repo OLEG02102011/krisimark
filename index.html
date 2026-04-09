@@ -561,6 +561,7 @@
         <span class="boss-danger">Если не успеешь — потеряешь ВСЁ!</span>
     </div>
 </div>
+
 <script>
 // =============================================
 // ПАНИКА / УЧИТЕЛЬ
@@ -640,6 +641,7 @@ const sndList=[
     {id:'snd_power',  name:'💥 Мощь',       desc:'Глубокий удар',      icon:'💥',cost:20000, owned:false,bonus:30, bonusType:'click',reqRebirth:1},
     {id:'snd_zap',    name:'⚡ Разряд',      desc:'Электро-импульс',   icon:'⚡',cost:100000,owned:false,bonus:100,bonusType:'ps',   reqRebirth:2},
     {id:'snd_epic',   name:'🎵 Эпический',  desc:'Аккорд победы',      icon:'🎵',cost:800000,owned:false,bonus:500,bonusType:'click',reqRebirth:3}
+    
 ];
 let activeSound='snd_default';
 let soundEnabled=false;
@@ -721,6 +723,9 @@ let unlockedAch=new Set();
 // =============================================
 // УТИЛИТЫ
 // =============================================
+// >>> ИЗМЕНЕНИЕ: Переменная для игрового цикла
+let lastUpdateTime;
+
 function getCost(u,c=1){let t=0;for(let i=0;i<c;i++)t+=Math.floor(u.baseCost*Math.pow(u.costMult,u.level+i));return t}
 function fmt(n){if(n>=1e15)return(n/1e15).toFixed(2)+'Q';if(n>=1e12)return(n/1e12).toFixed(2)+'T';if(n>=1e9)return(n/1e9).toFixed(2)+'B';if(n>=1e6)return(n/1e6).toFixed(2)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return Math.floor(n).toString()}
 function curIcon(){return`<img src="Currency.png" class="cur-icon" onerror="this.style.display='none'">`}
@@ -777,7 +782,7 @@ clickBtnWrap.addEventListener('mouseleave',()=>{
 // ВИДЕО ГЛАВНОЙ КНОПКИ
 // =============================================
 let mainVideoSession = 0;
-let videoPauseTimeout; // Добавляем переменную для хранения ID таймера
+let videoPauseTimeout;
 
 function updateMainButtonVideo() {
  const sk = skins.find(s => s.id === activeSkin);
@@ -790,33 +795,27 @@ function updateMainButtonVideo() {
 }
 
 clickBtnWrap.addEventListener('mouseenter', () => {
- // --- ИСПРАВЛЕНИЕ: Очищаем таймер паузы при наведении ---
  clearTimeout(videoPauseTimeout);
 
  const session = ++mainVideoSession;
- // --- ИСПРАВЛЕНИЕ: Проверяем свойство src, а не атрибут ---
  if (!clickBtnVideo.src) return;
 
- // Сбрасываем время сразу, чтобы не было кадра с конца при повторном наведении
  try { clickBtnVideo.currentTime = 0; } catch (e) {}
 
  const p = clickBtnVideo.play();
  if (p) p.then(() => {
   if (mainVideoSession === session) {
-   // --- ИСПРАВЛЕНИЕ: Проверяем, не закончилось ли видео ---
    if (!clickBtnVideo.ended) {
     clickBtnVideo.style.opacity = '1';
     clickBtnImg.style.opacity = '0'
    }
   } else {
-   // Если сессия устарела (курсор ушел до начала воспроизведения)
    try {
     clickBtnVideo.pause();
     clickBtnVideo.currentTime = 0
    } catch (e) {}
   }
  }).catch(() => {
-   // Обработка ошибки (например, если браузер заблокировал автоплей)
    if(mainVideoSession === session) {
      clickBtnVideo.style.opacity = '0';
      clickBtnImg.style.opacity = '1';
@@ -830,18 +829,14 @@ clickBtnWrap.addEventListener('mouseleave', () => {
  clickBtnImg.style.opacity = '1';
  const vid = clickBtnVideo;
 
- // --- ИСПРАВЛЕНИЕ: Сохраняем ID таймера в переменную ---
  videoPauseTimeout = setTimeout(() => {
   try {
    vid.pause();
-   // vid.currentTime = 0; // Перенес сброс времени в mouseenter для плавности
   } catch (e) {}
  }, 500);
 });
 
-// --- ИСПРАВЛЕНИЕ: Убираем инкремент mainVideoSession ---
 clickBtnVideo.addEventListener('ended', () => {
- mainVideoSession++; // Это больше не нужно
  clickBtnVideo.style.opacity = '0';
  clickBtnImg.style.opacity = '1'
 });
@@ -959,7 +954,7 @@ function doClick(cx,cy){
     currencyAmountEl.classList.add('bump');setTimeout(()=>currencyAmountEl.classList.remove('bump'),100);
     const r=clickBtn.getBoundingClientRect();const lx=cx-r.left,ly=cy-r.top;
     mkFloat(lx,ly);mkFloatCurrency(lx,ly);mkRing(clickBtn,lx,ly);mkFlash(clickBtn,lx,ly);mkSparks(clickBtn,lx,ly);mkExtras(clickBtn,lx,ly);mkGlobal(cx,cy);
-    playClickSound();updateUI();checkLvl();checkAch();
+    playClickSound();checkLvl();checkAch(); // updateUI() убран отсюда, т.к. теперь вызывается в главном цикле
 }
 
 function mkFloat(lx,ly){const cfg=getCfg();const n=document.createElement('div');n.classList.add('float-number');n.textContent='+'+fmt(game.clickPower);n.style.color=cfg.flt;n.style.textShadow='0 0 8px '+cfg.flt;n.style.left=lx+'px';n.style.top=ly+'px';n.style.marginLeft=((Math.random()-.5)*26)+'px';clickBtn.appendChild(n);setTimeout(()=>n.remove(),900)}
@@ -980,13 +975,35 @@ function buyUp(i) {
     if (game.score >= cost) {
         game.score -= cost;
         u.level += game.buyAmount;
+        game.totalUpgradesBought += game.buyAmount;
+        
+        // >>> ИЗМЕНЕНИЕ: Сбрасываем таймер, чтобы избежать нечестного дохода
+        lastUpdateTime = Date.now();
+        
         recalc();
+        playBuySound();
         renderUp();
-        updateUI();
         saveGame();
     }
 }
-function buyCUp(i){const u=currencyUpgrades[i];const cost=getCost(u,game.buyAmount);if(game.currency>=cost){game.currency-=cost;u.level+=game.buyAmount;recalc();playBuySound();renderUp();updateUI();checkAch()}}
+
+function buyCUp(i){
+    const u=currencyUpgrades[i];
+    const cost=getCost(u,game.buyAmount);
+    if(game.currency>=cost){
+        game.currency-=cost;
+        u.level+=game.buyAmount;
+        
+        // >>> ИЗМЕНЕНИЕ: Сбрасываем таймер, чтобы избежать нечестного дохода
+        lastUpdateTime = Date.now();
+        
+        recalc();
+        playBuySound();
+        renderUp();
+        checkAch();
+        saveGame();
+    }
+}
 
 function checkLvl(){let need=lvlReq(game.level);let lvled=false;while(game.levelProgress>=need){game.levelProgress-=need;game.level++;need=lvlReq(game.level);lvled=true}if(lvled)playLevelSound()}
 function lvlReq(l){return Math.floor(50*Math.pow(1.5,l-1))}
@@ -998,7 +1015,6 @@ function renderUp(){
     if (!list) return;
     list.innerHTML = '';
 
-    // Заголовок улучшений баллов
     const h1=document.createElement('div');h1.style.cssText='font-size:.78em;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:1px;margin:0 0 8px;text-align:center';h1.textContent='📊 Баллы (покупается за баллы)';list.appendChild(h1);
 
     upgrades.forEach((u,i)=>{
@@ -1009,7 +1025,6 @@ function renderUp(){
         list.appendChild(c);
     });
 
-    // Заголовок улучшений монет
     const h2=document.createElement('div');h2.style.cssText='font-size:.78em;font-weight:600;color:#b8860b;text-transform:uppercase;letter-spacing:1px;margin:12px 0 8px;text-align:center';
     h2.innerHTML=`<img src="Currency.png" style="width:14px;height:14px;vertical-align:middle;object-fit:contain" onerror="this.style.display='none'"> Монеты (покупается за монеты)`;
     list.appendChild(h2);
@@ -1021,7 +1036,6 @@ function renderUp(){
         c.innerHTML=`<div class="up-icon">${u.icon}</div><div class="up-det"><div class="up-name">${u.name}</div><div class="up-desc">${u.desc}</div><div class="up-lvl" style="color:#b8860b">Ур. ${u.level}</div></div><button class="up-btn" style="background:#b8860b" ${can?'':'disabled'} onclick="buyCUp(${i})">${curIcon()}${fmt(cost)}${game.buyAmount>1?' (x'+game.buyAmount+')':''}</button>`;
         list.appendChild(c);
     });
-    lastScoreForRender = game.score;
 }
 
 function softUpdateUpgrades() {
@@ -1031,19 +1045,12 @@ function softUpdateUpgrades() {
 
     let idx = 0;
 
-    // Сначала проверяем апгрейды за баллы
     upgrades.forEach((u) => {
-        if (u.level === 0 && game.totalEarned < u.baseCost * 0.4) return; // Пропускаем скрытые
-        
+        if (u.level === 0 && game.totalEarned < u.baseCost * 0.4) return;
         const cost = getCost(u, game.buyAmount);
         const canAfford = game.score >= cost;
-        
         if (cards[idx]) {
-            // Если денег хватает — убираем прозрачность (класс locked)
-            if (canAfford) cards[idx].classList.remove('locked');
-            else cards[idx].classList.add('locked');
-            
-            // Обновляем текст кнопки и её доступность
+            if (canAfford) cards[idx].classList.remove('locked'); else cards[idx].classList.add('locked');
             if (buttons[idx]) {
                 buttons[idx].disabled = !canAfford;
                 buttons[idx].textContent = fmt(cost) + (game.buyAmount > 1 ? ' (x' + game.buyAmount + ')' : '');
@@ -1052,18 +1059,14 @@ function softUpdateUpgrades() {
         idx++;
     });
 
-    // Затем проверяем апгрейды за монеты
     currencyUpgrades.forEach((u) => {
         const cost = getCost(u, game.buyAmount);
         const canAfford = game.currency >= cost;
-
         if (cards[idx]) {
-            if (canAfford) cards[idx].classList.remove('locked');
-            else cards[idx].classList.add('locked');
-
+            if (canAfford) cards[idx].classList.remove('locked'); else cards[idx].classList.add('locked');
             if (buttons[idx]) {
                 buttons[idx].disabled = !canAfford;
-                buttons[idx].innerHTML = `<img src="Currency.png" class="cur-icon" onerror="this.style.display='none'">` + fmt(cost);
+                buttons[idx].innerHTML = `<img src="Currency.png" class="cur-icon" onerror="this.style.display='none'">` + fmt(cost) + (game.buyAmount > 1 ? ` (x${game.buyAmount})` : '');
             }
         }
         idx++;
@@ -1077,8 +1080,6 @@ function updateShopButtons(){
     });
 }
 
-
-
 function renderAll(){renderSkins();renderBgs();renderFxs();renderSnds();renderUp()}
 
 function renderSkins(){
@@ -1090,14 +1091,11 @@ function renderSkins(){
     const c=document.createElement('div');
     c.className='shop-card'+(isActive?' s-active':'')+(!item.owned?' s-locked':'');
     c.dataset.cost=item.cost;
-    // ИСПРАВЛЕНО: добавлены обратные кавычки
     let bonusHTML=getBonusText(item)?`<div class="shop-bonus">🎁 ${getBonusText(item)}</div>`:'';
     let action='';
     if(isActive)action='<span class="shop-badge equipped">✓</span>';
     else if(item.owned)action='<span class="shop-badge owned" data-equip="1">Надеть</span>';
-    // ИСПРАВЛЕНО: добавлены обратные кавычки
     else if(rbLocked)action=`<button class="shop-buy rb-locked" disabled>🔒 ${item.reqRebirth} перерожд.</button>`;
-    // ИСПРАВЛЕНО: добавлены обратные кавычки
     else action=`<button class="shop-buy" data-buy="1" ${can?'':'disabled'}>${curIcon()} ${fmt(item.cost)}</button>`;
     c.innerHTML=`<div class="shop-preview"><img src="${item.img}" onerror="this.src='image.png'"></div>
       <div class="shop-info"><div class="shop-name">${item.name}</div><div class="shop-desc">${item.desc}</div>${bonusHTML}</div>${action}`;
@@ -1105,7 +1103,6 @@ function renderSkins(){
     if(buyBtn)buyBtn.addEventListener('click',()=>buySkin(i));
     const equipBtn=c.querySelector('[data-equip]');
     if(equipBtn)equipBtn.addEventListener('click',()=>equipSkin(item.id));
-    // Видео hover
     if(item.video){
       const preview=c.querySelector('.shop-preview');
       const img=preview.querySelector('img');
@@ -1140,21 +1137,10 @@ function updateUI(){
     const need=lvlReq(game.level);const pct=Math.min((game.levelProgress/need)*100,100);
     document.getElementById('level-fill').style.width=pct+'%';
     document.getElementById('level-progress-text').textContent=fmt(game.levelProgress)+' / '+fmt(need);
-    // Валюта
     document.getElementById('currencyAmount').textContent=fmt(game.currency);
     document.getElementById('currencyRate').textContent=fmt(game.currencyPerSecond);
     document.getElementById('currencyMult').textContent=game.rebirthMult;
 }
-
-setInterval(() => {
-    softUpdateUpgrades();
-    
-    updateShopButtons();
-    updateUI();
-    checkAch();
-}, 500);
-
-renderUp();
 
 // =============================================
 // СОХРАНЕНИЕ / ЗАГРУЗКА
@@ -1210,7 +1196,7 @@ function createStars(){const c=document.getElementById('starsOverlay');for(let i
 createStars();
 
 // =============================================
-// ЭПИЧЕСКИЙ БОСС
+// ЭПИЧЕСКИЙ БОСС (ОБНОВЛЕННАЯ ВЕРСИЯ)
 // =============================================
 let bossActive = false;
 let bossHp = 0;
@@ -1218,26 +1204,41 @@ let bossMaxHp = 0;
 let bossTime = 0;
 let bossInterval;
 
+// Флаги состояния для эффектов
+let isBossTakingDamage = false; // Флаг, чтобы видео урона не прерывалось
+let isCracklePlaying = false;  // Флаг, чтобы звук треска не запускался много раз
+
 function startBossFight() {
-    // Проверка, чтобы игрок не пришел к боссу совсем пустым
     if (game.clickPower < 10 && game.score < 1000) {
         alert('Ты слишком слаб для этого сражения! Прокачайся немного.');
         return;
     }
 
     bossActive = true;
-    // Здоровье босса масштабируется от твоей силы клика (около 150 кликов за 15 секунд)
     bossMaxHp = Math.max(5000, game.clickPower * 150 * game.rebirthMult); 
     bossHp = bossMaxHp;
-    bossTime = 15.0; // 15 секунд на уничтожение
+    bossTime = 15.0;
+
+    // Сброс флагов перед боем
+    isBossTakingDamage = false;
+    isCracklePlaying = false;
 
     document.getElementById('bossOverlay').style.display = 'flex';
     document.getElementById('bossHpFill').style.width = '100%';
     document.getElementById('bossIdleVideo').play().catch(()=>{});
 
-    // Запускаем таймер
     bossInterval = setInterval(() => {
         bossTime -= 0.1;
+
+        // Проверяем здоровье для звука треска
+        const hpPercent = (bossHp / bossMaxHp) * 100;
+        if (bossActive && hpPercent <= 25 && !isCracklePlaying) {
+            isCracklePlaying = true;
+            playBossCrackleLoop(); // Запускаем цикл проигрывания звука
+        } else if (hpPercent > 25) {
+            isCracklePlaying = false; // Останавливаем, если здоровье выше порога
+        }
+
         if (bossTime <= 0) {
             endBossFight(false); // Время вышло - поражение
         } else {
@@ -1249,59 +1250,126 @@ function startBossFight() {
 const bossArena = document.getElementById('bossArena');
 const bossDamageVideo = document.getElementById('bossDamageVideo');
 
+// Когда видео урона заканчивается, сбрасываем флаг
+bossDamageVideo.addEventListener('ended', () => {
+    if (bossActive) {
+        bossDamageVideo.style.opacity = '0';
+    }
+    isBossTakingDamage = false;
+});
+
 bossArena.addEventListener('mousedown', hitBoss);
 bossArena.addEventListener('touchstart', (e) => { e.preventDefault(); hitBoss(e); }, {passive: false});
 
 function hitBoss(e) {
     if (!bossActive) return;
     
+    // 1. Урон всегда наносится
     bossHp -= game.clickPower;
     
-    // Эффект визуального урона (показываем видео с уроном)
-    bossDamageVideo.style.opacity = '1';
-    bossDamageVideo.currentTime = 0;
-    bossDamageVideo.play().catch(()=>{});
-    
-    // Прячем видео урона через короткое время
-    setTimeout(() => { if (bossActive) bossDamageVideo.style.opacity = '0'; }, 250);
-
-    // Добавляем искры (используем уже готовую функцию глобальных искр)
+    // 2. Эффекты от клика (искры, звук) всегда проигрываются
     let cx = e.clientX || (e.touches && e.touches[0].clientX) || window.innerWidth/2;
     let cy = e.clientY || (e.touches && e.touches[0].clientY) || window.innerHeight/2;
     mkGlobal(cx, cy); 
     playClickSound();
 
-    // Обновляем полосу здоровья
+    // 3. Воспроизводим видео урона, ТОЛЬКО если оно не играет в данный момент
+    if (!isBossTakingDamage) {
+        isBossTakingDamage = true; // Ставим флаг, что видео начало играть
+        bossDamageVideo.style.opacity = '1';
+        bossDamageVideo.currentTime = 0;
+        bossDamageVideo.play().catch(()=>{
+            isBossTakingDamage = false; // Сбрасываем флаг, если play() не сработал
+        });
+    }
+
+    // 4. Обновляем полосу здоровья
     const pct = Math.max(0, (bossHp / bossMaxHp) * 100);
     document.getElementById('bossHpFill').style.width = pct + '%';
 
+    // 5. Проверяем, не побежден ли босс
     if (bossHp <= 0) {
-        endBossFight(true); // Босс повержен - победа
+        endBossFight(true);
     }
 }
 
+// Функция для цикличного проигрывания звука треска
+function playBossCrackleLoop() {
+    // Условие остановки: если бой неактивен или флаг треска выключен
+    if (!bossActive || !isCracklePlaying) {
+        return;
+    }
+
+    // Проигрываем один раз
+    try {
+        soundGenerators.snd_boss_crackle(getAudioCtx());
+    } catch(e) {}
+    
+    // Запускаем следующий звук через случайный промежуток времени
+    const nextCrackTime = 200 + Math.random() * 250; // каждые 0.2-0.45 секунды
+    setTimeout(playBossCrackleLoop, nextCrackTime);
+}
+
 function endBossFight(isWin) {
+    if (!bossActive) return; // Предотвращаем двойной вызов
+    
     bossActive = false;
+    isCracklePlaying = false; // Останавливаем звук треска
     clearInterval(bossInterval);
+    
     document.getElementById('bossOverlay').style.display = 'none';
     bossDamageVideo.style.opacity = '0';
 
     if (isWin) {
-        // Награда за победу
         game.score += 1000000;
         game.totalEarned += 1000000;
         game.currency += 100000;
         game.totalCurrency += 100000;
         alert("🎉 ПОБЕДА! Эпический босс повержен!\nНаграда:\n+ 1 000 000 баллов\n+ 100 000 монет");
     } else {
-        // Штраф за поражение
         game.score = 0;
         game.currency = 0;
         alert("💀 ПОРАЖЕНИЕ! Босс уничтожил тебя.\nВсе твои текущие баллы и монеты потеряны!");
     }
     
-    updateUI();
+    lastUpdateTime = Date.now();
+    
+    recalc(); 
+    renderUp();
     saveGame();
+}
+
+// =============================================
+// >>> ИЗМЕНЕНИЕ: ГЛАВНЫЙ ЦИКЛ ИГРЫ (GAME LOOP)
+// =============================================
+
+function gameLoop() {
+    const now = Date.now();
+    const deltaTime = now - lastUpdateTime; // Время в мс с последнего кадра
+
+    if (deltaTime > 0) {
+        // 1. Рассчитываем и прибавляем доход за прошедшее время
+        const scoreIncome = (game.perSecond / 1000) * deltaTime;
+        const currencyIncome = (game.currencyPerSecond / 1000) * deltaTime;
+
+        game.score += scoreIncome;
+        game.totalEarned += scoreIncome;
+        game.levelProgress += scoreIncome; // Добавляем опыт для уровня
+
+        game.currency += currencyIncome;
+        game.totalCurrency += currencyIncome;
+
+        // 2. Проверяем достижения
+        checkAch();
+    }
+    
+    // 3. Обновляем все, что нужно обновлять регулярно
+    updateUI();
+    softUpdateUpgrades();
+    updateShopButtons();
+
+    // 4. Запоминаем время для следующего кадра
+    lastUpdateTime = now;
 }
 
 // =============================================
@@ -1313,47 +1381,42 @@ applyBg();
 updateMainButtonVideo();
 updateSoundToggleUI();
 renderAll();
-updateUI();
+
+// >>> ИЗМЕНЕНИЕ: Инициализируем таймер и запускаем главный цикл
+lastUpdateTime = Date.now();
+gameLoop(); // Первый запуск, чтобы все сразу отобразилось
+setInterval(gameLoop, 100); // Запускаем цикл 10 раз в секунду
 
 function updateDynamicContent() {
     const now = new Date();
     const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth(); // 0 - Январь, 8 - Сентябрь
+    const currentMonth = now.getMonth(); 
 
-    // Логика: 1 класс в 2019 году
     const startYear = 2019;
     let grade = currentYear - startYear + 1;
 
-    // Если сейчас еще не наступило 1 сентября, класс считается предыдущим
     if (currentMonth < 8) {
         grade -= 1;
     }
 
-    // Цикл 1-11: если больше 11, сбрасывается до 1
     let finalGrade = ((grade - 1) % 11) + 1;
     if (finalGrade <= 0) finalGrade = 1;
 
-    // 1. Обновляем Title вкладки браузера
-    // Используем &nbsp; через символ \u00A0 для корректного отображения в JS
     document.title = `ВПР−${currentYear}, Информатика для ${finalGrade} класса: задания, ответы, решения`;
 
-    // 2. Обновляем год в копирайте
     const cpYear = document.getElementById('copyright-year');
     if (cpYear) cpYear.innerText = currentYear;
 
-    // 3. Обновляем класс во всех элементах на странице
     const gradeElements = ['grade-breadcrumb', 'grade-subheader-display', 'grade-main-display'];
     gradeElements.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.innerText = finalGrade;
     });
 
-    // 4. Обновляем текущий год в заголовках (если есть id="current-year-display")
     const yearDisplay = document.getElementById('current-year-display');
     if (yearDisplay) yearDisplay.innerText = currentYear;
 }
 
-// Запускаем при загрузке
 document.addEventListener('DOMContentLoaded', updateDynamicContent);
 </script>
 </body>
